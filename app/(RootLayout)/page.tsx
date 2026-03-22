@@ -1,5 +1,7 @@
+import Categories from "@/components/Home/Categories";
 import Hero from "@/components/Home/Hero";
-import Treending from "./Treending";
+import SubscriptionCTA from "@/components/Home/SubscriptionCTA";
+import Treending from "@/components/Home/Treending";
 
 const Home = () => {
   return (
@@ -7,6 +9,10 @@ const Home = () => {
       <Hero />
 
       <Treending />
+
+      <Categories />
+
+      <SubscriptionCTA />
     </div>
   );
 };

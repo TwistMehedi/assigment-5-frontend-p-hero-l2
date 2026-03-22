@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 interface MovieProps {
   title: string;
   image: string;
-  rating: string;
+  rating: number;
   category: string;
 }
 
