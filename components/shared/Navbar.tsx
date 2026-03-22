@@ -52,10 +52,20 @@ const Navbar = () => {
             </div>
 
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/login">Login</Link>
+              <Link
+                href="/login"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                Login
+              </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/login">Register</Link>
+              <Link
+                href="/register"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                Register
+              </Link>
             </Button>
 
             <ModeToggle />
@@ -99,11 +109,21 @@ const Navbar = () => {
               className="bg-secondary/50 border-none"
             />
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link href="/login">Login</Link>
+              <Link
+                href="/login"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                Login
+              </Link>
             </Button>
 
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link href="/register">Register</Link>
+              <Link
+                href="/register"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                Register
+              </Link>
             </Button>
 
             <Button
