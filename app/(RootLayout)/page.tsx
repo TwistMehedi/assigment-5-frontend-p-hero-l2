@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-import React from "react";
+import Hero from "@/components/Home/Hero";
+import Treending from "./Treending";
 
 const Home = () => {
   return (
-    <div>
-      <Button variant="outline">Button</Button>
+    <div className="flex flex-col w-full min-h-screen">
+      <Hero />
     </div>
   );
 };
