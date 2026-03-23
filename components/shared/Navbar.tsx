@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Menu, X, Search, Clapperboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ModeToggle } from "../Navbar/ModeToggle"; // তোমার পাথ অনুযায়ী
+import { ModeToggle } from "../Navbar/ModeToggle";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +15,7 @@ const Navbar = () => {
     { name: "Movies", href: "/movies" },
     { name: "Series", href: "/series" },
     { name: "Pricing", href: "/pricing" },
+    { name: "Dashboard", href: "/dashboard" },
   ];
 
   return (
