@@ -1,37 +1,23 @@
 import { ThemeProvider } from "@/components/Navbar/theme-provider";
+import ReduxProvider from "@/components/ReduxProvider";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="antialiased">
+        {/* ThemeProvider সবসময় সবার উপরে থাকবে */}
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          {/* ReduxProvider তার ভেতরে থাকবে */}
+          <ReduxProvider>
+            {children}
+          </ReduxProvider>
         </ThemeProvider>
       </body>
     </html>
   );
-}
-
-{
-  /* <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      > */
-}
-// <Navbar />
-// <main>{children}</main>
-// <Footer />
-{
-  /* </ThemeProvider> */
 }
