@@ -6,6 +6,7 @@ import { Mail, ArrowLeft, Loader2, Send } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useForgotPasswordMutation } from "@/redux/api/auth.api";
+import { useRouter } from "next/navigation";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState<string>("");
@@ -13,6 +14,7 @@ const ForgotPassword = () => {
 
   const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
+  const router = useRouter();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
@@ -20,10 +22,12 @@ const ForgotPassword = () => {
       return;
     }
     try {
-      const result = await forgotPassword(email).unwrap();
+      const result = await forgotPassword({ email }).unwrap();
       setIsSubmitted(true);
       toast.success(result?.message);
-      //   "Password reset otp sent to your email!"
+      setTimeout(() => {
+        router.push("/reset-password");
+      }, 3000);
     } catch (error: any) {
       toast.error(error?.data?.message || "Something went wrong!");
     }
@@ -103,7 +107,8 @@ const ForgotPassword = () => {
               onClick={() => setIsSubmitted(false)}
               className="text-[11px] uppercase font-bold tracking-widest text-[var(--primary)] hover:underline"
             >
-              Didn't receive the email? Try again
+              Didn't receive the email?
+              <Link href="/forgot-password">Try again</Link>
             </button>
           </motion.div>
         )}

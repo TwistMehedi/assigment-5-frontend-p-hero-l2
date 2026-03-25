@@ -33,10 +33,23 @@ export const authApi = createApi({
 
     forgotPassword: builder.mutation({
       query: (data) => ({
-        url: "forgot-password",
+        url: "email-otp/request-password-reset",
         method: "POST",
         body: data,
       }),
+    }),
+
+    resetPassword: builder.mutation({
+      query: (data) => {
+        // 🚩 Ekhane log dekhun
+        // console.log("Mutation Payload sending to backend:", data);
+
+        return {
+          url: "email-otp/reset-password",
+          method: "POST",
+          body: data,
+        };
+      },
     }),
   }),
 });
@@ -46,4 +59,5 @@ export const {
   useVerifyEmailMutation,
   useLoginUserMutation,
   useForgotPasswordMutation,
+  useResetPasswordMutation,
 } = authApi;

@@ -54,8 +54,7 @@ export default function LoginPage() {
     }
 
     try {
-      console.log(validation.data);
-      const result = await loginUser(validation.data).unwrap();
+        const result = await loginUser(validation.data).unwrap();
       console.log("Login Successful:", result);
       toast.success(result?.message);
       router.push("/");
@@ -170,7 +169,7 @@ export default function LoginPage() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading}
-            className="w-full bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all uppercase text-[11px] tracking-[0.2em] shadow-xl shadow-[var(--primary)]/20 mt-4 dark:text-black"
+            className="w-full bg-[var(--primary)] cursor-pointer hover:bg-[var(--primary)]/90 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all uppercase text-[11px] tracking-[0.2em] shadow-xl shadow-[var(--primary)]/20 mt-4 dark:text-black"
           >
             {isLoading ? (
               <>
