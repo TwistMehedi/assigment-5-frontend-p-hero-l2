@@ -14,18 +14,21 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { registerSchema } from "@/types/zod/auth/zod.register";
+import { useRegisterUserMutation } from "@/redux/api/auth.api";
+import { toast } from "react-toastify";
 
 export default function RegisterPage() {
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "CUSTOMER",
+    role: "",
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+   const router = useRouter();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -56,13 +59,19 @@ export default function RegisterPage() {
       return;
     }
 
-    setLoading(true);
+    // setLoading(true);
     try {
-      console.log("Validated Data:", validation.data);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
+      const result = await registerUser(validation.data).unwrap();
+      console.log("Registration Successful:", result);
+      toast.success(result.message || "Registration successful");
+      router.push("/verify");
+      // setLoading(false);
+    } catch (error: any) {
+      // setLoading(false);
       console.error("Registration failed", error);
+      if (error.data?.message) {
+        toast.error(error.data?.message);
+      }
     }
   };
 
@@ -204,21 +213,35 @@ export default function RegisterPage() {
                 className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] appearance-none cursor-pointer font-black uppercase"
                 onChange={handleChange}
               >
-                <option value="CUSTOMER">Customer (Viewer)</option>
-                <option value="PROVIDER">Provider (Content Creator)</option>
+                <option value="USER">User (Viewer)</option>
+                <option value="CREATOR">Creator (Content Creator)</option>
               </select>
             </div>
+            <AnimatePresence>
+              {errors.role && (
+                <motion.p
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="text-[10px] text-red-500 font-bold flex items-center gap-1 mt-1 overflow-hidden"
+                >
+                  <AlertCircle size={12} /> {errors.role}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
 
           <motion.button
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            disabled={loading}
-            className="w-full bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all uppercase text-[11px] tracking-[0.2em] shadow-xl shadow-[var(--primary)]/20 mt-4 dark:text-black"
+            disabled={isLoading}
+            className="w-full bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white font-black py-4 rounded-xl flex items-center cursor-pointer justify-center gap-2 transition-all uppercase text-[11px] tracking-[0.2em] shadow-xl shadow-[var(--primary)]/20 mt-4 dark:text-black"
           >
-            {loading ? (
-              <Loader2 className="animate-spin" size={20} />
+            {isLoading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} /> <p>Waiting...</p>
+              </>
             ) : (
               "Complete Registration"
             )}
@@ -237,7 +260,6 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* Divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-[var(--border)]"></span>
@@ -251,13 +273,17 @@ export default function RegisterPage() {
 
         <div className="grid grid-cols-1 gap-4">
           <motion.button
-            whileHover={{ scale: 1.01, backgroundColor: "var(--muted)" }}
+            whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             type="button"
             onClick={() => console.log("Google Login Clicked")}
             className="flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-transparent py-3 text-sm font-bold text-[var(--foreground)] transition-all hover:shadow-md"
           >
-            <svg className="h-5 w-5" viewBox="0 0 24 24">
+            <svg
+              className="h-5 w-5"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                 fill="#4285F4"

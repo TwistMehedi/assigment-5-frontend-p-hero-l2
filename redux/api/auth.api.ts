@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/v1/auth",
+    baseUrl: "http://localhost:5000/api/v1/auth/",
     credentials: "include",
   }),
   endpoints: (builder) => ({
@@ -14,7 +14,15 @@ export const authApi = createApi({
         body: registerData,
       }),
     }),
+
+    verifyEmail: builder.mutation({
+      query: ({email, otp}) => ({
+        url: "verify-otp",
+        method: "POST",
+        body: { email, otp },
+      }),
+    }),
   }),
 });
 
-export const {} = authApi;
+export const { useRegisterUserMutation, useVerifyEmailMutation } = authApi;
