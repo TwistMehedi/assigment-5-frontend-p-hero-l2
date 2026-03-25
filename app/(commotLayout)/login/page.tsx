@@ -13,6 +13,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { loginSchema } from "@/types/zod/auth/zod.login";
+import { useLoginUserMutation } from "@/redux/api/auth.api";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -20,8 +22,9 @@ export default function LoginPage() {
     password: "",
   });
 
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,14 +53,17 @@ export default function LoginPage() {
       return;
     }
 
-    setLoading(true);
     try {
-      console.log("Login Data:", validation.data);
-      // এখানে আপনার লগইন API কল হবে
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
+      console.log(validation.data);
+      const result = await loginUser(validation.data).unwrap();
+      console.log("Login Successful:", result);
+      toast.success(result?.message);
+      router.push("/");
+    } catch (error: any) {
       console.error("Login failed", error);
+      if (error.data?.message) {
+        toast.error(error.data?.message);
+      }
     }
   };
 
@@ -163,11 +169,14 @@ export default function LoginPage() {
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            disabled={loading}
+            disabled={isLoading}
             className="w-full bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all uppercase text-[11px] tracking-[0.2em] shadow-xl shadow-[var(--primary)]/20 mt-4 dark:text-black"
           >
-            {loading ? (
-              <Loader2 className="animate-spin" size={20} />
+            {isLoading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                <span>Loging...</span>
+              </>
             ) : (
               <>
                 Sign In <ArrowRight size={16} />
@@ -188,7 +197,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-[var(--border)]"></span>
