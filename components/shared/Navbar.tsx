@@ -1,23 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X, Search, Clapperboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../Navbar/ModeToggle";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Movies", href: "/movies" },
     { name: "Series", href: "/series" },
     { name: "Pricing", href: "/pricing" },
-    { name: "Dashboard", href: "/dashboard" },
+    // { name: "Dashboard", href: "/dashboard" },
   ];
 
+  const user = useSelector((state: any) => state?.auth?.user) || null;
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,30 +55,30 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-4">
-            <div className="relative w-full max-w-[200px]">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search..."
-                className="pl-9 bg-secondary/50 border-none h-9 focus-visible:ring-1 focus-visible:ring-primary"
-              />
-            </div>
+            {user ? (
+              <Link
+                href="/dashboard"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
+                  Login
+                </Link>
 
-            <Button variant="ghost" size="sm" asChild>
-              <Link
-                href="/login"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                Login
-              </Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link
-                href="/register"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                Register
-              </Link>
-            </Button>
+                <Link
+                  href="/register"
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
+                  Register
+                </Link>
+              </>
+            )}
 
             <ModeToggle />
           </div>
@@ -105,30 +116,33 @@ const Navbar = () => {
           </div>
 
           <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
-            <Input
-              placeholder="Search..."
-              className="bg-secondary/50 border-none"
-            />
-            <Button variant="outline" className="w-full justify-start" asChild>
+            {user ? (
               <Link
-                href="/login"
+                href="/dashboard"
                 className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
               >
-                Login
+                Dashboard
               </Link>
-            </Button>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
+                  Login
+                </Link>
 
-            <Button variant="outline" className="w-full justify-start" asChild>
-              <Link
-                href="/register"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                Register
-              </Link>
-            </Button>
+                <Link
+                  href="/register"
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
+                  Register
+                </Link>
+              </>
+            )}
 
             <Button
-              className="w-full bg-primary"
+              className="w-full bg-primary cursor-pointer"
               onClick={() => setIsOpen(false)}
             >
               Get Started

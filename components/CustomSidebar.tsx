@@ -28,28 +28,59 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useSelector } from "react-redux";
 
-const sidebarItems = [
-  { name: "Overview", href: "/dashboard/provider", icon: LayoutDashboard },
+// const sidebarItems = [
+//   { name: "Overview", href: "/dashboard/provider", icon: LayoutDashboard },
+//   {
+//     name: "Movie Library",
+//     href: "/dashboard/provider/movies",
+//     icon: Clapperboard,
+//   },
+//   { name: "Categories", href: "/dashboard/provider/genres", icon: Film },
+//   { name: "Subscriptions", href: "/dashboard/admin/billing", icon: Ticket },
+//   {
+//     name: "Watch History",
+//     href: "/dashboard/admin/history",
+//     icon: MonitorPlay,
+//   },
+//   { name: "Customers", href: "/dashboard/admin/users", icon: Users },
+//   { name: "Settings", href: "/dashboard/settings", icon: Settings },
+// ];
+
+const userUrl = [
+  { name: "Overview user", href: "/dashboard/user", icon: LayoutDashboard },
+];
+const adminUrl = [
+  { name: "Overview admin", href: "/dashboard/admin", icon: LayoutDashboard },
+];
+const creatorUrl = [
   {
-    name: "Movie Library",
-    href: "/dashboard/provider/movies",
-    icon: Clapperboard,
+    name: "Overview creator",
+    href: "/dashboard/provider",
+    icon: LayoutDashboard,
   },
-  { name: "Categories", href: "/dashboard/provider/genres", icon: Film },
-  { name: "Subscriptions", href: "/dashboard/admin/billing", icon: Ticket },
-  {
-    name: "Watch History",
-    href: "/dashboard/admin/history",
-    icon: MonitorPlay,
-  },
-  { name: "Customers", href: "/dashboard/admin/users", icon: Users },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-export default function CustomSidebar({ user }: { user: any }) {
+export default function CustomSidebar() {
+  const [mounted, setMounted] = React.useState(false);
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
+
+  const user = useSelector((state: any) => state?.auth?.user) || null;
+
+  const sidebarItems =
+    user?.role === "ADMIN"
+      ? adminUrl
+      : user?.role === "CREATOR"
+        ? creatorUrl
+        : userUrl;
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <Sidebar
@@ -72,10 +103,10 @@ export default function CustomSidebar({ user }: { user: any }) {
             </div>
             <div className="flex flex-col group-data-[collapsible=icon]:hidden">
               <span className="font-black text-[var(--foreground)] tracking-tighter leading-none uppercase text-xl">
-                Movie<span className="text-[var(--primary)]">Hub</span>
+                Movie<span className="text-[var(--primary)]">-Portal</span>
               </span>
               <span className="text-[8px] font-bold text-[var(--muted-foreground)] uppercase tracking-[0.2em] mt-1">
-                Production Admin
+                Production {user?.role}
               </span>
             </div>
           </Link>
@@ -98,7 +129,7 @@ export default function CustomSidebar({ user }: { user: any }) {
                   asChild
                   isActive={isActive}
                   tooltip={item.name}
-                  onClick={() => isMobile && setOpenMobile(false)} // মোবাইলে ক্লিক করলে সাইডবার বন্ধ হবে
+                  onClick={() => isMobile && setOpenMobile(false)}
                   className={cn(
                     "h-11 rounded-[var(--radius)] px-4 transition-all duration-200",
                     isActive
@@ -133,10 +164,10 @@ export default function CustomSidebar({ user }: { user: any }) {
 
           <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
             <span className="font-bold text-[var(--foreground)] text-[10px] truncate uppercase leading-none">
-              {user?.name || "Mehedi Hasan"}
+              {user?.name}
             </span>
             <span className="text-[8px] font-black text-[var(--primary)] uppercase tracking-widest mt-1">
-              {user?.role || "Provider"}
+              {user?.role}
             </span>
           </div>
           <button className="ml-auto p-1.5 text-[var(--muted-foreground)] hover:text-red-500 transition-colors group-data-[collapsible=icon]:hidden">

@@ -15,6 +15,8 @@ import {
 import { loginSchema } from "@/types/zod/auth/zod.login";
 import { useLoginUserMutation } from "@/redux/api/auth.api";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/redux/features/auth.slice";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -23,6 +25,7 @@ export default function LoginPage() {
   });
 
   const [loginUser, { isLoading }] = useLoginUserMutation();
+  const dispatch = useDispatch();
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
@@ -54,8 +57,18 @@ export default function LoginPage() {
     }
 
     try {
-        const result = await loginUser(validation.data).unwrap();
+      const result = await loginUser(validation.data).unwrap();
       console.log("Login Successful:", result);
+      dispatch(
+        setCredentials({
+          user: result?.data?.user,
+          cookies: {
+            token: result?.cookies?.token,
+            refreshToken: result?.cookies?.refreshToken,
+            sessionToken: result?.cookies?.sessionToken,
+          },
+        }),
+      );
       toast.success(result?.message);
       router.push("/");
     } catch (error: any) {
@@ -92,7 +105,6 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email Address */}
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase text-[var(--foreground)] ml-1 tracking-widest">
               Email Address
@@ -124,7 +136,6 @@ export default function LoginPage() {
             </AnimatePresence>
           </div>
 
-          {/* Password */}
           <div className="space-y-1">
             <div className="flex justify-between items-center ml-1">
               <label className="text-[10px] font-black uppercase text-[var(--foreground)] tracking-widest">
@@ -174,7 +185,7 @@ export default function LoginPage() {
             {isLoading ? (
               <>
                 <Loader2 className="animate-spin" size={20} />
-                <span>Loging...</span>
+                <span>Logging in...</span>
               </>
             ) : (
               <>
