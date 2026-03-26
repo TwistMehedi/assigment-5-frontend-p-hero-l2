@@ -1,6 +1,12 @@
 import { ThemeProvider } from "@/components/Navbar/theme-provider";
 import ReduxProvider from "@/components/ReduxProvider";
+import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default function RootLayout({
   children,
@@ -9,7 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">
+      <body
+        className={`${inter.className} min-h-screen bg-background text-foreground antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
