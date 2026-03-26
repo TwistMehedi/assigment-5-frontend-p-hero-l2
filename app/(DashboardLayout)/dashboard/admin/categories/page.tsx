@@ -10,22 +10,24 @@ import {
   AlertCircle,
   Check,
 } from "lucide-react";
-import { useCreateCategoryMutation } from "@/redux/api/movieApi";
-import { toast } from "react-toastify";
+import {
+  ICategory,
+  useCategoriesQuery,
+  useCreateCategoryMutation,
+} from "@/redux/api/movieApi";
 
-interface Category {
-  id: string;
-  name: string;
-  movieCount?: number;
-  slug?: string;
-}
+import { toast } from "react-toastify";
 
 export default function CategoryManagement() {
   const [mounted, setMounted] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
+  const { data: categoryResponse, isLoading: isFetching } =
+    useCategoriesQuery();
   const [createCategory, { isLoading }] = useCreateCategoryMutation();
+
+  const categories = categoryResponse?.data || [];
 
   useEffect(() => {
     setMounted(true);
@@ -94,9 +96,13 @@ export default function CategoryManagement() {
         </div>
       )}
 
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {categories.length > 0 ? (
-          categories.map((cat) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {isFetching ? (
+          <p className="text-xs font-bold uppercase animate-pulse">
+            Loading Categories...
+          </p>
+        ) : categories.length > 0 ? (
+          categories.map((cat: ICategory) => (
             <div
               key={cat.id}
               className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 flex items-center justify-between group hover:border-[var(--primary)]/50 transition-colors shadow-sm"
@@ -110,7 +116,7 @@ export default function CategoryManagement() {
                     {cat.name}
                   </h3>
                   <p className="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-widest">
-                    {cat.movieCount} Movies Linked
+                    {cat.movieCount || 0} Movies Linked
                   </p>
                 </div>
               </div>
@@ -119,12 +125,7 @@ export default function CategoryManagement() {
                 <button className="p-2 hover:bg-[var(--muted)] rounded-lg text-blue-500 transition-colors">
                   <Edit3 size={16} />
                 </button>
-                <button
-                  onClick={() =>
-                    setCategories(categories.filter((c) => c.id !== cat.id))
-                  }
-                  className="p-2 hover:bg-red-500/10 rounded-lg text-red-500 transition-colors"
-                >
+                <button className="p-2 hover:bg-red-500/10 rounded-lg text-red-500 transition-colors">
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -138,7 +139,7 @@ export default function CategoryManagement() {
             </p>
           </div>
         )}
-      </div> */}
+      </div>
     </div>
   );
 }
