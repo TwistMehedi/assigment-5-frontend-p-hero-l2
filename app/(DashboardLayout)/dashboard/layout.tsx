@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import "../../globals.css";
 import CustomSidebar from "@/components/CustomSidebar";
 import { ModeToggle } from "@/components/Navbar/ModeToggle";
@@ -16,7 +16,14 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [mounted, setMounted] = React.useState(false);
   const user = useSelector((state: any) => state?.auth.user) || null;
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <SidebarProvider>

@@ -41,9 +41,6 @@ export const authApi = createApi({
 
     resetPassword: builder.mutation({
       query: (data) => {
-        // 🚩 Ekhane log dekhun
-        // console.log("Mutation Payload sending to backend:", data);
-
         return {
           url: "email-otp/reset-password",
           method: "POST",
