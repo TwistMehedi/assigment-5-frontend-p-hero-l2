@@ -12,22 +12,39 @@ import {
   MapPin,
 } from "lucide-react";
 import CreateChannelModal from "@/components/movie/CreateChannelModal";
-
-const dummyChannels = [
-  {
-    id: "1",
-    name: "Action Blockbuster",
-    location: "Dhaka, BD",
-    description: "Home of the best action movies and series.",
-    image: "https://api.dicebear.com/7.x/initials/svg?seed=AB",
-    totalMovie: "12",
-    totalSeries: "5",
-  },
-];
+import { IChannel } from "@/types/interface/movie.interface";
+import { useChannelsQuery } from "@/redux/api/movieApi";
 
 export default function MyChannelsPage() {
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const channels = dummyChannels;
+
+  const [selectedChannel, setSelectedChannel] = useState<IChannel | null>(null);
+
+  const { data: channelsResult, isLoading, isError } = useChannelsQuery();
+  const channels = channelsResult?.data || [];
+
+  if (isLoading)
+    return (
+      <div className="text-white text-center p-20">
+        Broadcasting data loading...
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="text-red-500 text-center p-20">
+        Failed to fetch channels.
+      </div>
+    );
+
+  const handleOpenModal = (channel?: IChannel) => {
+    if (channel) {
+      setSelectedChannel(channel);
+    } else {
+      setSelectedChannel(null);
+    }
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto p-6">
@@ -51,7 +68,7 @@ export default function MyChannelsPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Channels", value: channels.length, icon: Tv },
+          { label: "Total Channels", value: channels?.length, icon: Tv },
           { label: "Total Content", value: "17+", icon: Film },
         ].map((stat, i) => (
           <div
@@ -69,7 +86,7 @@ export default function MyChannelsPage() {
 
       {channels.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {channels.map((channel) => (
+          {channels.map((channel: IChannel) => (
             <div
               key={channel.id}
               className="group bg-[var(--card)] border border-[var(--border)] rounded-3xl overflow-hidden hover:border-[var(--primary)]/50 transition-all duration-300"
@@ -103,25 +120,41 @@ export default function MyChannelsPage() {
                     <p className="text-[10px] font-black uppercase text-[var(--muted-foreground)]">
                       Movies
                     </p>
-                    <p className="font-bold text-white">{channel.totalMovie}</p>
+                    <p className="font-bold text-white">
+                      {channel?.totalMovie}
+                    </p>
                   </div>
                   <div className="text-center flex-1 border-x border-[var(--border)]/50">
                     <p className="text-[10px] font-black uppercase text-[var(--muted-foreground)]">
                       Series
                     </p>
                     <p className="font-bold text-white">
-                      {channel.totalSeries}
+                      {channel?.totalSeries}
                     </p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+
+                {/* <div className="grid grid-cols-2 gap-2">
                   <button className="flex items-center justify-center gap-2 bg-[var(--muted)] hover:bg-[var(--primary)] hover:text-black py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">
                     <Settings size={14} /> Edit
                   </button>
                   <button className="flex items-center justify-center gap-2 border border-[var(--border)] hover:border-[var(--primary)] py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">
                     <ExternalLink size={14} /> Visit
                   </button>
+                </div> */}
+
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => handleOpenModal(channel)}
+                    className="flex items-center justify-center gap-2 bg-[var(--muted)] hover:bg-[var(--primary)] hover:text-black py-2.5 rounded-xl text-[10px] font-black uppercase transition-all"
+                  >
+                    <Settings size={14} /> Edit
+                  </button>
+                  <button className="flex items-center justify-center gap-2 border border-[var(--border)] hover:border-[var(--primary)] py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">
+                    <ExternalLink size={14} /> Visit
+                  </button>
                 </div>
+                
               </div>
             </div>
           ))}
@@ -135,7 +168,11 @@ export default function MyChannelsPage() {
 
       <CreateChannelModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedChannel(null);
+        }}
+        initialData={selectedChannel}
       />
     </div>
   );

@@ -27,7 +27,7 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  console.log("userRole", userRole);
+  // console.log("userRole", userRole);
   const isAdmin = userRole === "ADMIN";
   const isCustomer = userRole === "USER";
   const isProvider = userRole === "CREATOR";

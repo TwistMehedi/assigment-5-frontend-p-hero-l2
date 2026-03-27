@@ -1,4 +1,8 @@
-import { IApiResponse, ICategory } from "@/types/interface/movie.interface";
+import {
+  IApiResponse,
+  ICategory,
+  IChannel,
+} from "@/types/interface/movie.interface";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const movieApi = createApi({
@@ -29,11 +33,31 @@ export const movieApi = createApi({
       providesTags: ["Categories"],
     }),
 
-    createChannel: builder.mutation<IApiResponse<any>, FormData>({
+    createChannel: builder.mutation<IApiResponse<IChannel>, FormData>({
       query: (channelData) => ({
         url: "create-channel",
         method: "POST",
         body: channelData,
+      }),
+      invalidatesTags: ["Movie"],
+    }),
+
+    channels: builder.query<IApiResponse<IChannel[]>, void>({
+      query: () => ({
+        url: "channels",
+        method: "GET",
+      }),
+      providesTags: ["Movie"],
+    }),
+
+    updateChannel: builder.mutation<
+      IApiResponse<IChannel>,
+      { id: string; data: FormData }
+    >({
+      query: ({ id, data }) => ({
+        url: `update-channel/${id}`,
+        method: "PUT",
+        body: data,
       }),
       invalidatesTags: ["Movie"],
     }),
@@ -44,4 +68,6 @@ export const {
   useCreateCategoryMutation,
   useCategoriesQuery,
   useCreateChannelMutation,
+  useChannelsQuery,
+  useUpdateChannelMutation,
 } = movieApi;

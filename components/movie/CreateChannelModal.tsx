@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   X,
@@ -13,23 +13,30 @@ import {
   Upload,
 } from "lucide-react";
 import { channelSchema } from "@/types/zod/movie/channelSchema";
-import { useCreateChannelMutation } from "@/redux/api/movieApi";
+import {
+  useCreateChannelMutation,
+  useUpdateChannelMutation,
+} from "@/redux/api/movieApi";
 import { toast } from "react-toastify";
+import { IChannel } from "@/types/interface/movie.interface";
 
 interface CreateChannelModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialData?: IChannel | null;
 }
 
 export default function CreateChannelModal({
   isOpen,
   onClose,
+  initialData,
 }: CreateChannelModalProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [createChannel, { isLoading }] = useCreateChannelMutation();
+  const [updateChannel, { isLoading: isUpdating }] = useUpdateChannelMutation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -37,6 +44,19 @@ export default function CreateChannelModal({
     description: "",
   });
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name,
+        location: initialData.location,
+        description: initialData.description || "",
+      });
+      setPreview(initialData.image);
+    } else {
+      setFormData({ name: "", location: "", description: "" });
+      setPreview(null);
+    }
+  }, [initialData, isOpen]);
   if (!isOpen) return null;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,10 +101,8 @@ export default function CreateChannelModal({
     e.preventDefault();
 
     const result = channelSchema.safeParse(formData);
-
-    let formattedErrors: { [key: string]: string } = {};
-
     if (!result.success) {
+      let formattedErrors: { [key: string]: string } = {};
       result.error.issues.forEach((issue) => {
         formattedErrors[issue.path[0] as string] = issue.message;
       });
@@ -92,40 +110,40 @@ export default function CreateChannelModal({
       return;
     }
 
-    if (!imageFile) {
+    const channelData = new FormData();
+    channelData.append("name", result.data.name);
+    channelData.append("location", result.data.location);
+    channelData.append("description", result.data.description || "");
+
+    if (imageFile) {
+      channelData.append("image", imageFile);
+    } else if (!initialData) {
       setErrors((prev) => ({ ...prev, logo: "Channel logo is required" }));
       return;
     }
 
-    if (Object.keys(errors).length > 0) return;
-
-    const channelData = new FormData();
-
-    console.log(channelData);
-    Object.entries(result.data).forEach(([key, value]) =>
-      channelData.append(key, String(value)),
-    );
-    channelData.append("image", imageFile as File);
-
     try {
-      const result = await createChannel(channelData).unwrap();
-
-      if (result.success) {
-        toast.success(result.message);
+      let res;
+      if (initialData) {
+        res = await updateChannel({
+          id: initialData.id,
+          data: channelData,
+        }).unwrap();
+      } else {
+        res = await createChannel(channelData).unwrap();
       }
 
-      setFormData({
-        name: "",
-        location: "",
-        description: "",
-      });
-      setPreview(null);
-      setImageFile(null);
-      onClose();
+      if (res.success) {
+        toast.success(res.message || "Operation successful!");
+
+        setFormData({ name: "", location: "", description: "" });
+        setPreview(null);
+        setImageFile(null);
+        onClose();
+      }
     } catch (error: any) {
-      if (error.data?.message) {
-        toast.error(error.data?.message);
-      }
+      console.error("Mutation Error:", error);
+      toast.error(error?.data?.message || "Something went wrong!");
     }
   };
 
@@ -268,17 +286,17 @@ export default function CreateChannelModal({
           )}
 
           <button
-            disabled={isLoading}
+            disabled={isLoading || isUpdating}
             type="submit"
             className="w-full bg-[var(--primary)] cursor-pointer text-black py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 mt-4 shadow-xl shadow-[var(--primary)]/20"
           >
-            {isLoading ? (
+            {isLoading || isUpdating ? (
               <>
                 <Loader2 className="animate-spin" size={20} />
                 <p>Creating...</p>
               </>
             ) : (
-              "Create Channel"
+              <>{initialData ? "Update Channel" : "Create Channel"}</>
             )}
           </button>
         </form>
