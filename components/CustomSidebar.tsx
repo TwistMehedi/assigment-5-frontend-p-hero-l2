@@ -22,7 +22,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useSelector } from "react-redux";
-import { adminSidebarUrl } from "@/app/constrant/sidebarUrl";
+import { adminSidebarUrl, creatorSidebarUrl } from "@/app/constrant/sidebarUrl";
 
 // const sidebarItems = [
 //   { name: "Overview", href: "/dashboard/provider", icon: LayoutDashboard },
@@ -59,14 +59,6 @@ const userUrl = [
 //   { name: "Settings", href: "/dashboard/admin/settings", icon: Settings },
 // ];
 
-const creatorUrl = [
-  {
-    name: "Overview creator",
-    href: "/dashboard/provider",
-    icon: LayoutDashboard,
-  },
-];
-
 export default function CustomSidebar() {
   const [mounted, setMounted] = React.useState(false);
   const pathname = usePathname();
@@ -78,7 +70,7 @@ export default function CustomSidebar() {
     user?.role === "ADMIN"
       ? adminSidebarUrl
       : user?.role === "CREATOR"
-        ? creatorUrl
+        ? creatorSidebarUrl
         : userUrl;
 
   React.useEffect(() => {

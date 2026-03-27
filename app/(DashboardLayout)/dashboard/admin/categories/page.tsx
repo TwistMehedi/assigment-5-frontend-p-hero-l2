@@ -11,12 +11,12 @@ import {
   Check,
 } from "lucide-react";
 import {
-  ICategory,
   useCategoriesQuery,
   useCreateCategoryMutation,
 } from "@/redux/api/movieApi";
 
 import { toast } from "react-toastify";
+import { ICategory } from "@/types/interface/movie.interface";
 
 export default function CategoryManagement() {
   const [mounted, setMounted] = useState(false);

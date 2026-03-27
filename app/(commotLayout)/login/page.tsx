@@ -72,8 +72,7 @@ export default function LoginPage() {
       toast.success(result?.message);
       router.push("/");
     } catch (error: any) {
-      console.error("Login failed", error);
-      if (error.data?.message) {
+       if (error.data?.message) {
         toast.error(error.data?.message);
       }
     }

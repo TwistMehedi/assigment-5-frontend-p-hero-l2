@@ -1,32 +1,19 @@
+import { IApiResponse, ICategory } from "@/types/interface/movie.interface";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export interface ICategory {
-  id: string;
-  name: string;
-  movieCount?: number;
-  slug?: string;
-  createdAt?: string;
-}
-
-export interface IApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
 
 export const movieApi = createApi({
   reducerPath: "movieApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/v1/categories/",
+    baseUrl: "http://localhost:5000/api/v1/movie/",
     credentials: "include",
   }),
-  tagTypes: ["Categories"],
+  tagTypes: ["Categories", "Movie"],
 
   endpoints: (builder) => ({
     createCategory: builder.mutation<IApiResponse<ICategory>, { name: string }>(
       {
         query: (data) => ({
-          url: "create",
+          url: "create-category",
           method: "POST",
           body: data,
         }),
@@ -41,7 +28,20 @@ export const movieApi = createApi({
       }),
       providesTags: ["Categories"],
     }),
+
+    createChannel: builder.mutation<IApiResponse<any>, FormData>({
+      query: (channelData) => ({
+        url: "create-channel",
+        method: "POST",
+        body: channelData,
+      }),
+      invalidatesTags: ["Movie"],
+    }),
   }),
 });
 
-export const { useCreateCategoryMutation, useCategoriesQuery } = movieApi;
+export const {
+  useCreateCategoryMutation,
+  useCategoriesQuery,
+  useCreateChannelMutation,
+} = movieApi;
