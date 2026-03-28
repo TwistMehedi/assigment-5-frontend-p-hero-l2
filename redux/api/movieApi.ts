@@ -61,6 +61,14 @@ export const movieApi = createApi({
       }),
       invalidatesTags: ["Movie"],
     }),
+
+    deleteChanele: builder.mutation({
+      query: (id) => ({
+        url: `delete-channel/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Movie"],
+    }),
   }),
 });
 
@@ -70,4 +78,5 @@ export const {
   useCreateChannelMutation,
   useChannelsQuery,
   useUpdateChannelMutation,
+  useDeleteChaneleMutation,
 } = movieApi;

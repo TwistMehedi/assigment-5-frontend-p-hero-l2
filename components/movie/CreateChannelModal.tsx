@@ -142,7 +142,6 @@ export default function CreateChannelModal({
         onClose();
       }
     } catch (error: any) {
-      console.error("Mutation Error:", error);
       toast.error(error?.data?.message || "Something went wrong!");
     }
   };

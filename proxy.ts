@@ -46,9 +46,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  if (!sessionToken && pathname === "/login") {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
+   
 
   return NextResponse.next();
 }
@@ -58,6 +56,6 @@ export const config = {
     "/dashboard/admin/:path*",
     "/dashboard/provider/:path*",
     "/dashboard/user/:path*",
-    "/login",
+   
   ],
 };

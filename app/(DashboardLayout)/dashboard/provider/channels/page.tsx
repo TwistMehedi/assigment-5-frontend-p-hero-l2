@@ -7,47 +7,62 @@ import {
   MoreVertical,
   ExternalLink,
   Settings,
-  Film,
   AlertCircle,
   MapPin,
+  Trash2,
 } from "lucide-react";
 import CreateChannelModal from "@/components/movie/CreateChannelModal";
 import { IChannel } from "@/types/interface/movie.interface";
-import { useChannelsQuery } from "@/redux/api/movieApi";
+import {
+  useChannelsQuery,
+  useDeleteChaneleMutation,
+} from "@/redux/api/movieApi";
+import { toast } from "react-toastify";
 
 export default function MyChannelsPage() {
-  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [selectedChannel, setSelectedChannel] = useState<IChannel | null>(null);
 
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+
+  const [deleteChannel, { isLoading: isDeleting }] = useDeleteChaneleMutation();
   const { data: channelsResult, isLoading, isError } = useChannelsQuery();
   const channels = channelsResult?.data || [];
 
   if (isLoading)
     return (
-      <div className="text-white text-center p-20">
+      <div className="text-white text-center p-20 font-black uppercase tracking-widest animate-pulse">
         Broadcasting data loading...
       </div>
     );
   if (isError)
     return (
-      <div className="text-red-500 text-center p-20">
+      <div className="text-red-500 text-center p-20 font-black uppercase">
         Failed to fetch channels.
       </div>
     );
 
   const handleOpenModal = (channel?: IChannel) => {
-    if (channel) {
-      setSelectedChannel(channel);
-    } else {
-      setSelectedChannel(null);
-    }
+    setSelectedChannel(channel || null);
     setIsModalOpen(true);
+    setActiveMenu(null);
+  };
+
+  const handleDeleteChannel = async (id: string) => {
+    try {
+      const result = await deleteChannel(id).unwrap();
+      toast.success(result.message);
+      setActiveMenu(null);
+    } catch (error: any) {
+      toast.error(error.data?.message || "Delete failed");
+    }
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto p-6">
+    <div
+      className="space-y-8 max-w-7xl mx-auto p-6"
+      onClick={() => setActiveMenu(null)}
+    >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black uppercase tracking-tight text-white">
@@ -67,21 +82,13 @@ export default function MyChannelsPage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Total Channels", value: channels?.length, icon: Tv },
-          { label: "Total Content", value: "17+", icon: Film },
-        ].map((stat, i) => (
-          <div
-            key={i}
-            className="bg-[var(--card)] border border-[var(--border)] p-4 rounded-2xl"
-          >
-            <stat.icon size={16} className="text-[var(--primary)] mb-2" />
-            <p className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase">
-              {stat.label}
-            </p>
-            <p className="text-xl font-black text-white">{stat.value}</p>
-          </div>
-        ))}
+        <div className="bg-[var(--card)] border border-[var(--border)] p-4 rounded-2xl">
+          <Tv size={16} className="text-[var(--primary)] mb-2" />
+          <p className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase">
+            Total Channels
+          </p>
+          <p className="text-xl font-black text-white">{channels?.length}</p>
+        </div>
       </div>
 
       {channels.length > 0 ? (
@@ -89,7 +96,7 @@ export default function MyChannelsPage() {
           {channels.map((channel: IChannel) => (
             <div
               key={channel.id}
-              className="group bg-[var(--card)] border border-[var(--border)] rounded-3xl overflow-hidden hover:border-[var(--primary)]/50 transition-all duration-300"
+              className="group relative bg-[var(--card)] border border-[var(--border)] rounded-3xl overflow-hidden hover:border-[var(--primary)]/50 transition-all duration-300"
             >
               <div className="p-6 space-y-4">
                 <div className="flex justify-between items-start">
@@ -97,7 +104,7 @@ export default function MyChannelsPage() {
                     <img
                       src={channel.image}
                       alt="logo"
-                      className="w-12 h-12 rounded-xl object-cover bg-[var(--muted)]"
+                      className="w-12 h-12 rounded-xl object-cover bg-[var(--muted)] border border-[var(--border)]"
                     />
                     <div>
                       <h3 className="font-black uppercase tracking-tight text-lg text-white">
@@ -108,20 +115,49 @@ export default function MyChannelsPage() {
                       </p>
                     </div>
                   </div>
-                  <button className="p-2 hover:bg-[var(--muted)] rounded-lg text-[var(--muted-foreground)]">
-                    <MoreVertical size={18} />
-                  </button>
+
+                  <div className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveMenu(
+                          activeMenu === channel.id ? null : channel.id,
+                        );
+                      }}
+                      className="p-2 hover:bg-[var(--muted)] rounded-xl transition-colors text-[var(--muted-foreground)] hover:text-white"
+                    >
+                      <MoreVertical size={20} />
+                    </button>
+
+                    {activeMenu === channel.id && (
+                      <div
+                        className="absolute right-0 mt-2 w-32 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in duration-200"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          onClick={() => handleDeleteChannel(channel.id)}
+                          disabled={isDeleting}
+                          className="w-full flex items-center gap-2 px-4 py-3 text-[10px] font-black uppercase text-red-500 hover:bg-red-500/10 transition-colors"
+                        >
+                          <Trash2 size={14} />
+                          {isDeleting ? "Processing..." : "Delete"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
                 <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 min-h-[32px]">
                   {channel.description}
                 </p>
+
                 <div className="flex items-center gap-4 py-3 border-y border-[var(--border)]/50">
                   <div className="text-center flex-1">
                     <p className="text-[10px] font-black uppercase text-[var(--muted-foreground)]">
                       Movies
                     </p>
                     <p className="font-bold text-white">
-                      {channel?.totalMovie}
+                      {channel?.totalMovie || 0}
                     </p>
                   </div>
                   <div className="text-center flex-1 border-x border-[var(--border)]/50">
@@ -129,19 +165,10 @@ export default function MyChannelsPage() {
                       Series
                     </p>
                     <p className="font-bold text-white">
-                      {channel?.totalSeries}
+                      {channel?.totalSeries || 0}
                     </p>
                   </div>
                 </div>
-
-                {/* <div className="grid grid-cols-2 gap-2">
-                  <button className="flex items-center justify-center gap-2 bg-[var(--muted)] hover:bg-[var(--primary)] hover:text-black py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">
-                    <Settings size={14} /> Edit
-                  </button>
-                  <button className="flex items-center justify-center gap-2 border border-[var(--border)] hover:border-[var(--primary)] py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">
-                    <ExternalLink size={14} /> Visit
-                  </button>
-                </div> */}
 
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -154,7 +181,6 @@ export default function MyChannelsPage() {
                     <ExternalLink size={14} /> Visit
                   </button>
                 </div>
-                
               </div>
             </div>
           ))}
