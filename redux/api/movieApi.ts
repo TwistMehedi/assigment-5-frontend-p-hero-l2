@@ -69,6 +69,14 @@ export const movieApi = createApi({
       }),
       invalidatesTags: ["Movie"],
     }),
+
+    getChannel: builder.query<IApiResponse<IChannel>, string>({
+      query: (id) => ({
+        url: `channel/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Movie"],
+    }),
   }),
 });
 
@@ -79,4 +87,5 @@ export const {
   useChannelsQuery,
   useUpdateChannelMutation,
   useDeleteChaneleMutation,
+  useGetChannelQuery,
 } = movieApi;

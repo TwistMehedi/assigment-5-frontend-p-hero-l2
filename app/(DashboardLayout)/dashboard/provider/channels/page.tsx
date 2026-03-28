@@ -18,6 +18,7 @@ import {
   useDeleteChaneleMutation,
 } from "@/redux/api/movieApi";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 export default function MyChannelsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -147,10 +148,6 @@ export default function MyChannelsPage() {
                   </div>
                 </div>
 
-                <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 min-h-[32px]">
-                  {channel.description}
-                </p>
-
                 <div className="flex items-center gap-4 py-3 border-y border-[var(--border)]/50">
                   <div className="text-center flex-1">
                     <p className="text-[10px] font-black uppercase text-[var(--muted-foreground)]">
@@ -177,8 +174,10 @@ export default function MyChannelsPage() {
                   >
                     <Settings size={14} /> Edit
                   </button>
-                  <button className="flex items-center justify-center gap-2 border border-[var(--border)] hover:border-[var(--primary)] py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">
-                    <ExternalLink size={14} /> Visit
+                  <button className="flex flex-col items-center justify-center gap-2 border border-[var(--border)] hover:border-[var(--primary)] py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">
+                    <Link href={`/dashboard/provider/channels/${channel.id}`}>
+                      <ExternalLink size={14} /> Visit
+                    </Link>
                   </button>
                 </div>
               </div>
