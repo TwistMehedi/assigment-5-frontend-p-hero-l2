@@ -21,6 +21,7 @@ import {
 import Image from "next/image";
 import { ISeason } from "@/types/interface/series.interface";
 import AddSeasonModal from "@/components/Series/Season/AddSeasonModal";
+import Link from "next/link";
 
 const SingleSeries = () => {
   const { id } = useParams();
@@ -65,7 +66,7 @@ const SingleSeries = () => {
         <div className="absolute inset-0 z-0">
           <Image
             src={series.posterUrl || ""}
-            alt={series.title}
+            alt={series.title || "Series Poster"}
             fill
             className="object-cover opacity-40 blur-[2px] scale-105"
           />
@@ -173,8 +174,8 @@ const SingleSeries = () => {
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none">
                       {season.posterUrl && (
                         <Image
-                          src={season.posterUrl}
-                          alt=""
+                          src={season.posterUrl || ""}
+                          alt={season.title || "Season"}
                           fill
                           className="object-cover"
                         />
@@ -185,7 +186,7 @@ const SingleSeries = () => {
                       <div className="relative w-14 h-20 rounded-xl overflow-hidden bg-black/20 shrink-0 border border-white/5">
                         {season.posterUrl ? (
                           <Image
-                            src={season.posterUrl}
+                            src={season.posterUrl || ""}
                             alt={season.title || "Season"}
                             fill
                             className="object-cover"
@@ -205,6 +206,12 @@ const SingleSeries = () => {
                           {season.episodes?.length || 0} Episodes • Season{" "}
                           {season.seasonNumber}
                         </p>
+                        <Link
+                          href={`/dashboard/provider/series/${id}/seasons/${season.id}`}
+                          className="text-[10px] font-black uppercase text-[var(--primary)] hover:underline"
+                        >
+                          View Episodes
+                        </Link>
                       </div>
                     </div>
 

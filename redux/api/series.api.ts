@@ -1,4 +1,8 @@
-import { IApiResponse, ISeries } from "@/types/interface/series.interface";
+import {
+  IApiResponse,
+  ISeason,
+  ISeries,
+} from "@/types/interface/series.interface";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { updateSeries } from "../../../backend/src/modules/series/series.controller";
 
@@ -52,6 +56,23 @@ export const seriesApi = createApi({
       }),
       invalidatesTags: ["Series"],
     }),
+
+    singleSeason: builder.query<IApiResponse<ISeason>, string>({
+      query: (seasonid) => ({
+        url: `season/${seasonid}`,
+        method: "GET",
+      }),
+      providesTags: ["Series"],
+    }),
+
+    addEpisode: builder.mutation<IApiResponse<ISeason>, FormData>({
+      query: (episodeData) => ({
+        url: "upload-episode",
+        method: "POST",
+        body: episodeData,
+      }),
+      invalidatesTags: ["Series"],
+    }),
   }),
 });
 
@@ -61,4 +82,6 @@ export const {
   useUpdateSeriesMutation,
   useSingleSeriesQuery,
   useCreateSeasonMutation,
+  useSingleSeasonQuery,
+  useAddEpisodeMutation,
 } = seriesApi;

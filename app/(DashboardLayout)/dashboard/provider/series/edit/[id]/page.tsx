@@ -2,21 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  useGetSingleSeriesQuery,
   useSingleSeriesQuery,
   useUpdateSeriesMutation,
 } from "@/redux/api/series.api";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-  Save,
-  Image as ImageIcon,
-  Clapperboard,
-  Users,
-  Tag,
-  Loader2,
-  Undo2,
-} from "lucide-react";
+import { Save, Image as ImageIcon, Loader2, Undo2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 const EditSeries = () => {
