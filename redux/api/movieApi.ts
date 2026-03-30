@@ -1,7 +1,9 @@
 import {
+  IApiMovieResponse,
   IApiResponse,
   ICategory,
   IChannel,
+  IMovieResponse,
 } from "@/types/interface/movie.interface";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -77,6 +79,52 @@ export const movieApi = createApi({
       }),
       providesTags: ["Movie"],
     }),
+
+    uploadMovie: builder.mutation<IApiMovieResponse<IMovieResponse>, FormData>({
+      query: (movieData) => ({
+        url: "upload-movie",
+        method: "POST",
+        body: movieData,
+      }),
+      invalidatesTags: ["Movie"],
+    }),
+
+    myMovie: builder.query<Record<string, any>, string>({
+      query: (id) => ({
+        url: `my-movie/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Movie"],
+    }),
+
+    getMyMovies: builder.query<IApiMovieResponse<IMovieResponse[]>, any>({
+      query: (params) => ({
+        url: "my-movies",
+        method: "GET",
+        params: params,
+      }),
+      providesTags: ["Movie"],
+    }),
+
+    updateMovie: builder.mutation<
+      any,
+      { id: string | string[]; data: FormData }
+    >({
+      query: ({ id, data }) => ({
+        url: `update-movie/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Movie"],
+    }),
+
+    deleteMovie: builder.mutation({
+      query: (id) => ({
+        url: `delete-movie/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Movie"],
+    }),
   }),
 });
 
@@ -88,4 +136,9 @@ export const {
   useUpdateChannelMutation,
   useDeleteChaneleMutation,
   useGetChannelQuery,
+  useUploadMovieMutation,
+  useMyMovieQuery,
+  useGetMyMoviesQuery,
+  useUpdateMovieMutation,
+  useDeleteMovieMutation,
 } = movieApi;
