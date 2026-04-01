@@ -1,164 +1,180 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Star,
-  Play,
   Tv,
   Calendar,
-  Info,
-  MessageSquare,
-  ChevronRight,
+  ShoppingCart,
+  Loader2,
+  Users,
+  PlayCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import RatingSystem from "@/components/movie/RatingSystem";
+import { useSeriesQuery } from "@/redux/api/series.api";
+import { useParams, useRouter } from "next/navigation";
+import { useCheckPurchaseQuery } from "@/redux/api/payment.api";
 
-const SeriesDetails = ({ params }: { params: { id: string } }) => {
-  const [selectedSeason, setSelectedSeason] = useState(1);
+const SeriesDetails = () => {
+  const { id } = useParams();
+  const router = useRouter();
 
-  const series = {
-    title: "The Last of Us",
-    description:
-      "After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope.",
-    rating: 8.8,
-    year: "2023",
-    seasons: [
-      {
-        number: 1,
-        episodes: [
-          {
-            id: 1,
-            title: "When You're Lost in the Darkness",
-            duration: "1h 21m",
-          },
-          { id: 2, title: "Infected", duration: "52m" },
-          { id: 3, title: "Long, Long Time", duration: "1h 15m" },
-        ],
-      },
-      {
-        number: 2,
-        episodes: [{ id: 4, title: "Coming Soon...", duration: "--" }],
-      },
-    ],
-    genre: "Drama, Sci-Fi",
-    image:
-      "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=1200",
+  const { data: response, isLoading: isSeriesLoading } =
+    useSeriesQuery<any>(id);
+  const series = response?.data;
+
+  console.log(series);
+  const { data: checkResponse, isLoading: isCheckLoading } =
+    useCheckPurchaseQuery(id as string, {
+      skip: !id,
+    });
+
+  console.log(checkResponse);
+
+  const isPurchased = checkResponse?.data?.isPurchased;
+  console.log(isPurchased);
+
+  const handleAction = () => {
+    if (isPurchased || !series?.isPremium) {
+      router.push(`/watch/${id}`);
+    } else {
+      router.push(`/checkout/${id}?type=series`);
+    }
   };
 
+  if (isSeriesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
+
+  if (!series)
+    return (
+      <div className="text-center py-20 font-bold uppercase tracking-widest text-destructive">
+        Series not found!
+      </div>
+    );
+
   return (
-    <div className="min-h-screen pb-20">
-      <div className="relative h-[45vh] md:h-[60vh] w-full">
+    <div className="min-h-screen pb-20 bg-background text-foreground">
+      <div className="relative h-[40vh] md:h-[60vh] w-full">
         <img
-          src={series.image}
+          src={series?.posterUrl}
           className="absolute inset-0 w-full h-full object-cover"
-          alt={series.title}
+          alt={series?.title}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
       </div>
 
-      <div className="container mx-auto px-4 mt-[-100px] relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          <div className="lg:col-span-2 space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-4xl md:text-6xl font-black tracking-tight">
-                {series.title}
+      <div className="container mx-auto px-4 -mt-20 md:-mt-32 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-8 space-y-12">
+            <div className="space-y-4 text-center lg:text-left">
+              <h1 className="text-4xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
+                {series?.title}
               </h1>
-              <div className="flex flex-wrap gap-4 items-center text-sm font-bold">
-                <span className="flex items-center gap-1 text-yellow-500 bg-yellow-500/10 px-3 py-1 rounded-full">
-                  <Star className="h-4 w-4 fill-current" /> {series.rating} / 10
+
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4 items-center text-xs font-bold uppercase tracking-widest">
+                <span className="flex items-center gap-1 text-yellow-500 bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20">
+                  <Star className="h-3 w-3 fill-current" /> 9.5 Rating
                 </span>
-                <span className="flex items-center gap-1 text-primary bg-primary/10 px-3 py-1 rounded-full uppercase">
-                  <Tv className="h-4 w-4" /> {series.seasons.length} Seasons
+                <span className="flex items-center gap-1 text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+                  <Tv className="h-3 w-3" /> {series?.seasons?.length} Seasons
                 </span>
                 <span className="text-muted-foreground flex items-center gap-1">
-                  <Calendar size={16} /> {series.year}
+                  <Calendar size={14} />{" "}
+                  {new Date(series?.releaseDate).getFullYear()}
                 </span>
               </div>
-              <p className="text-lg text-muted-foreground leading-relaxed max-w-3xl">
-                {series.description}
+
+              <p className="text-sm md:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto lg:mx-0">
+                {series?.description}
               </p>
             </div>
 
-            <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
-              <div className="p-6 border-b border-border flex items-center justify-between bg-muted/30">
-                <h3 className="font-bold text-xl flex items-center gap-2">
-                  <Info className="text-primary" size={20} /> Episodes
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 border-l-4 border-primary pl-4">
+                <h3 className="text-2xl font-black uppercase italic tracking-tighter">
+                  Available Seasons
                 </h3>
-                <select
-                  className="bg-background border border-border rounded-lg px-4 py-2 text-sm font-bold outline-none focus:ring-2 focus:ring-primary"
-                  onChange={(e) => setSelectedSeason(Number(e.target.value))}
-                >
-                  {series.seasons.map((s) => (
-                    <option key={s.number} value={s.number}>
-                      Season {s.number}
-                    </option>
-                  ))}
-                </select>
               </div>
-
-              <div className="divide-y divide-border">
-                {series.seasons
-                  .find((s) => s.number === selectedSeason)
-                  ?.episodes.map((ep, index) => (
-                    <div
-                      key={ep.id}
-                      className="p-4 hover:bg-muted/50 transition-colors flex items-center justify-between group cursor-pointer"
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className="text-2xl font-black text-muted-foreground/30 group-hover:text-primary transition-colors">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <div>
-                          <h4 className="font-bold text-sm md:text-base">
-                            {ep.title}
-                          </h4>
-                          <p className="text-xs text-muted-foreground">
-                            {ep.duration}
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-full group-hover:bg-primary group-hover:text-white"
-                      >
-                        <Play size={16} fill="currentColor" />
-                      </Button>
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-6">
+                {series?.seasons?.map((s: any) => (
+                  <div
+                    key={s.id}
+                    className="group relative aspect-[2/3] rounded-2xl overflow-hidden border border-border hover:border-primary transition-all duration-300 shadow-xl cursor-pointer"
+                  >
+                    <img
+                      src={s.posterUrl}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      alt={s.title}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                      <PlayCircle size={40} className="text-primary" />
                     </div>
-                  ))}
+                  </div>
+                ))}
               </div>
-            </div>
-
-            <div className="bg-card p-8 rounded-3xl border border-border space-y-6">
-              <h3 className="text-xl font-black italic flex items-center gap-2 uppercase tracking-tighter">
-                <MessageSquare className="text-primary" /> Drop a Review
-              </h3>
-              <RatingSystem onRate={(val) => console.log("Rated:", val)} />
-              <textarea
-                placeholder="Share your thoughts on this series..."
-                className="w-full h-32 p-4 bg-background border border-border rounded-2xl outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
-              />
-              <Button className="font-bold px-8 rounded-xl shadow-lg shadow-primary/20">
-                Submit Rating
-              </Button>
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-background aspect-[2/3]">
-              <img
-                src={series.image}
-                className="w-full h-full object-cover"
-                alt="Poster"
-              />
-            </div>
-            <div className="bg-primary/5 border border-primary/20 p-6 rounded-3xl space-y-4">
-              <p className="text-sm font-medium text-center italic">
-                Subscribe to Premium to watch all episodes in 4K Ultra HD.
-              </p>
-              <Button className="w-full h-14 rounded-2xl font-black text-lg gap-2 shadow-xl shadow-primary/30">
-                Upgrade Now
-              </Button>
+          <div className="lg:col-span-4">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg sticky top-24">
+              <div className="p-5 space-y-4">
+                <div className="flex justify-between items-center gap-2">
+                  <h3 className="text-sm font-black uppercase italic tracking-tighter text-foreground truncate">
+                    {series?.title}
+                  </h3>
+                  <span className="bg-primary text-black font-black px-3 py-1.5 rounded-lg shadow-md italic text-xs shrink-0 transform rotate-2">
+                    {isPurchased
+                      ? "OWNED"
+                      : series?.price > 0
+                        ? `$${series?.price}`
+                        : "FREE"}
+                  </span>
+                </div>
+
+                <Button
+                  onClick={handleAction}
+                  disabled={isCheckLoading}
+                  className={`w-full cursor-pointer h-12 rounded-lg font-bold text-sm gap-2 uppercase tracking-tight shadow-md transition-all active:scale-95 ${
+                    isPurchased
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-primary text-black"
+                  }`}
+                >
+                  {isCheckLoading ? (
+                    <Loader2 className="animate-spin" size={18} />
+                  ) : isPurchased || !series?.isPremium ? (
+                    <>
+                      <PlayCircle size={18} /> Watch Now
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart size={16} /> Buy Series
+                    </>
+                  )}
+                </Button>
+
+                <div className="space-y-3 pt-4 border-t border-border">
+                  <div className="flex items-center gap-1.5 text-primary font-bold uppercase text-[10px] tracking-widest">
+                    <Users size={12} /> Star Cast
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {series?.cast?.map((actor: string) => (
+                      <span
+                        key={actor}
+                        className="text-[9px] bg-muted/50 px-2.5 py-1 rounded-md font-medium border border-border/50 uppercase"
+                      >
+                        {actor}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

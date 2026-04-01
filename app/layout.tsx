@@ -1,5 +1,6 @@
 import { ThemeProvider } from "@/components/Navbar/theme-provider";
 import ReduxProvider from "@/components/ReduxProvider";
+import { AuthProvider } from "@/components/shared/AuthProvider";
 import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 
@@ -25,7 +26,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ReduxProvider>
-            {children}
+            <AuthProvider>{children}</AuthProvider>
             <ToastContainer
               theme="dark"
               position="top-center"

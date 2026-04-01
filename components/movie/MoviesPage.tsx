@@ -1,153 +1,165 @@
 "use client";
 
-import React, { useState } from "react";
-import HomeMovieCard from "@/components/Home/HomeMovieCard";
+import React, { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
-
-// রিকোয়ারমেন্ট অনুযায়ী ডামি ডাটা (পরবর্তীতে ডাটাবেস থেকে আসবে)
-const allMovies = [
-  {
-    id: 1,
-    title: "The Dark Knight",
-    rating: 9.0,
-    category: "Action",
-    image:
-      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=500",
-  },
-  {
-    id: 2,
-    title: "Interstellar",
-    rating: 8.7,
-    category: "Sci-Fi",
-    image:
-      "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=500",
-  },
-  {
-    id: 3,
-    title: "Inception",
-    rating: 8.8,
-    category: "Thriller",
-    image:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=500",
-  },
-  {
-    id: 4,
-    title: "The Joker",
-    rating: 8.4,
-    category: "Drama",
-    image:
-      "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=500",
-  },
-  {
-    id: 5,
-    title: "Avengers: Endgame",
-    rating: 8.4,
-    category: "Action",
-    image:
-      "https://images.unsplash.com/photo-1608889175123-8ee362201f81?q=80&w=500",
-  },
-  {
-    id: 6,
-    title: "Parasite",
-    rating: 8.6,
-    category: "Drama",
-    image:
-      "https://images.unsplash.com/photo-1585951237318-9ea5e175b891?q=80&w=500",
-  },
-  {
-    id: 7,
-    title: "The Martian",
-    rating: 8.0,
-    category: "Sci-Fi",
-    image:
-      "https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=500",
-  },
-  {
-    id: 8,
-    title: "Blade Runner 2049",
-    rating: 8.0,
-    category: "Sci-Fi",
-    image:
-      "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=500",
-  },
-];
+import {
+  Search,
+  Loader2,
+  Clapperboard,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useAllMoviesQuery, useCategoriesQuery } from "@/redux/api/movieApi";
+import { ICategory, IMovieResponse } from "@/types/interface/movie.interface";
+import HomeMovieCard from "../Home/HomeMovieCard";
 
 const MoviesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const categories = ["All", "Action", "Sci-Fi", "Drama", "Thriller"];
+  const { data: categoriesRes} =
+    useCategoriesQuery(undefined);
 
-  const filteredMovies = allMovies.filter((movie) => {
-    const matchesSearch = movie.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "All" || movie.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+  const categories = useMemo(() => {
+    const categoriesData =
+      categoriesRes?.data?.data || categoriesRes?.data || [];
+    return ["All", ...categoriesData.map((c: ICategory) => c.name)];
+  }, [categoriesRes]);
+
+  const { data: moviesRes, isLoading: isMoviesLoading } = useAllMoviesQuery({
+    search: searchQuery,
+    category: selectedCategory,
+    page: currentPage,
+    limit: 10,
   });
+
+  const movies = moviesRes?.data?.movies || [];
+  const pagination = moviesRes?.data?.pagination;
+  const { totalMovies = 0, totalPages = 1 } = pagination || {};
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen pt-24 pb-20 container mx-auto px-4">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
-          <h1 className="text-4xl font-black tracking-tight">
-            Explore <span className="text-primary">Movies</span>
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Discover and rate your favorite titles ({filteredMovies.length})
-          </p>
+      <div className="mb-10">
+        <h1 className="text-4xl font-black tracking-tight uppercase">
+          Explore <span className="text-primary">Movies</span>
+        </h1>
+        <p className="text-muted-foreground mt-2 text-sm font-medium uppercase tracking-wider">
+          Found {totalMovies} titles matching your criteria
+        </p>
+      </div>
+
+      <div className="space-y-6 mb-12">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by title, director, cast..."
+            className="pl-10 rounded-xl bg-card border-border focus-visible:ring-primary h-12"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by title..."
-              className="pl-10 rounded-xl"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap border ${
-                  selectedCategory === cat
-                    ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
-                    : "bg-card hover:border-primary/50"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar border-b border-border/50">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => {
+                setSelectedCategory(cat);
+                setCurrentPage(1);
+              }}
+              className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap border ${
+                selectedCategory === cat
+                  ? "bg-primary text-black border-primary shadow-lg shadow-primary/20"
+                  : "bg-card border-border hover:border-primary/40 text-muted-foreground"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
       </div>
 
-      {filteredMovies.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {filteredMovies.map((movie) => (
-            <HomeMovieCard key={movie.id} {...movie} />
-          ))}
+      {isMoviesLoading ? (
+        <div className="flex flex-col items-center justify-center py-32 gap-4">
+          <Loader2 className="animate-spin text-primary" size={48} />
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-50">
+            Loading Content...
+          </p>
         </div>
+      ) : movies.length > 0 ? (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mb-16">
+            {movies.map((movie: IMovieResponse) => (
+              <HomeMovieCard key={movie.id} {...movie} />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-4 mt-12 border-t border-border pt-10">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="p-2 rounded-full border border-border hover:bg-primary hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-all"
+              >
+                <ChevronLeft size={20} />
+              </button>
+
+              <div className="flex items-center gap-2">
+                {[...Array(totalPages)].map((_, index) => {
+                  const pageNumber = index + 1;
+                  return (
+                    <button
+                      key={pageNumber}
+                      onClick={() => handlePageChange(pageNumber)}
+                      className={`h-10 w-10 rounded-xl text-xs font-black transition-all ${
+                        currentPage === pageNumber
+                          ? "bg-primary text-black shadow-lg shadow-primary/20"
+                          : "bg-card border border-border hover:border-primary/50"
+                      }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="p-2 rounded-full border border-border hover:bg-primary hover:text-black disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          )}
+        </>
       ) : (
-        <div className="text-center py-20 bg-card rounded-3xl border border-dashed border-border">
-          <p className="text-muted-foreground text-lg">
-            No movies found matching your criteria.
+        <div className="flex flex-col items-center justify-center py-32 bg-card/30 rounded-3xl border border-dashed border-border">
+          <Clapperboard
+            size={64}
+            className="text-muted-foreground mb-4 opacity-20"
+          />
+          <p className="text-muted-foreground font-bold uppercase tracking-widest text-sm">
+            No movies found
           </p>
           <button
             onClick={() => {
               setSearchQuery("");
               setSelectedCategory("All");
+              setCurrentPage(1);
             }}
-            className="mt-4 text-primary font-bold hover:underline"
+            className="mt-6 text-primary text-[10px] font-black uppercase tracking-[0.2em] px-6 py-3 border border-primary/20 rounded-full hover:bg-primary/5 transition-all"
           >
-            Clear all filters
+            Reset all filters
           </button>
         </div>
       )}

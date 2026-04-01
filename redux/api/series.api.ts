@@ -9,7 +9,9 @@ import { updateSeries } from "../../../backend/src/modules/series/series.control
 export const seriesApi = createApi({
   reducerPath: "seriesApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/v1/series/",
+    baseUrl:
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/series/` ||
+      "http://localhost:5000/api/v1/series/",
     credentials: "include",
   }),
   tagTypes: ["Series"],
@@ -23,6 +25,24 @@ export const seriesApi = createApi({
       }),
       invalidatesTags: ["Series"],
     }),
+
+    allSeries: builder.query({
+      query: (params) => ({
+        url: "all-series",
+        method: "GET",
+        params: params,
+      }),
+      providesTags: ["Series"],
+    }),
+
+    series: builder.query({
+      query: (id) => ({
+        url: `series/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Series"],
+    }),
+
     mySerieses: builder.query<IApiResponse<ISeries[]>, void>({
       query: () => ({
         url: "my-serieses",
@@ -30,6 +50,7 @@ export const seriesApi = createApi({
       }),
       providesTags: ["Series"],
     }),
+
     updateSeries: builder.mutation<
       IApiResponse<ISeries>,
       { id: string; data: FormData }
@@ -41,6 +62,7 @@ export const seriesApi = createApi({
       }),
       invalidatesTags: ["Series"],
     }),
+
     singleSeries: builder.query<IApiResponse<ISeries>, string>({
       query: (id) => ({
         url: `my-series/${id}`,
@@ -48,6 +70,7 @@ export const seriesApi = createApi({
       }),
       providesTags: ["Series"],
     }),
+
     createSeason: builder.mutation<IApiResponse<ISeries>, FormData>({
       query: (seasonData) => ({
         url: "upload-season",
@@ -78,6 +101,8 @@ export const seriesApi = createApi({
 
 export const {
   useCreateSeriesMutation,
+  useAllSeriesQuery,
+  useSeriesQuery,
   useMySeriesesQuery,
   useUpdateSeriesMutation,
   useSingleSeriesQuery,

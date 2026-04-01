@@ -22,42 +22,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useSelector } from "react-redux";
-import { adminSidebarUrl, creatorSidebarUrl } from "@/app/constrant/sidebarUrl";
-
-// const sidebarItems = [
-//   { name: "Overview", href: "/dashboard/provider", icon: LayoutDashboard },
-//   {
-//     name: "Movie Library",
-//     href: "/dashboard/provider/movies",
-//     icon: Clapperboard,
-//   },
-//   { name: "Categories", href: "/dashboard/provider/genres", icon: Film },
-//   { name: "Subscriptions", href: "/dashboard/admin/billing", icon: Ticket },
-//   {
-//     name: "Watch History",
-//     href: "/dashboard/admin/history",
-//     icon: MonitorPlay,
-//   },
-//   { name: "Customers", href: "/dashboard/admin/users", icon: Users },
-//   { name: "Settings", href: "/dashboard/settings", icon: Settings },
-// ];
-
-const userUrl = [
-  { name: "Overview user", href: "/dashboard/user", icon: LayoutDashboard },
-];
-
-// const adminUrl = [
-//   { name: "Overview", href: "/dashboard/admin", icon: LayoutDashboard },
-//   { name: "Users", href: "/dashboard/admin/users", icon: Users },
-//   {
-//     name: "Movie Approval",
-//     href: "/dashboard/admin/movies",
-//     icon: Clapperboard,
-//   },
-//   { name: "Categories", href: "/dashboard/admin/categories", icon: Film },
-//   { name: "Revenue", href: "/dashboard/admin/revenue", icon: Ticket },
-//   { name: "Settings", href: "/dashboard/admin/settings", icon: Settings },
-// ];
+import {
+  adminSidebarUrl,
+  creatorSidebarUrl,
+  userUrl,
+} from "@/app/constrant/sidebarUrl";
 
 export default function CustomSidebar() {
   const [mounted, setMounted] = React.useState(false);

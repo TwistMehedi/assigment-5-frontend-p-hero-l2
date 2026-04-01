@@ -17,7 +17,7 @@ const Loading = () => {
 
        <div className="flex flex-col items-center">
         <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40 animate-pulse">
-          Loading Content
+          Loading Content....
         </p>
         <div className="h-[2px] w-12 bg-[var(--primary)] mt-2 rounded-full overflow-hidden">
           <div className="h-full bg-white w-full -translate-x-full animate-[loading-bar_1.5s_infinite]"></div>

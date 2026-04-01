@@ -12,6 +12,7 @@ interface SeriesProps {
   seasons: number;
   category: string;
   status?: string;
+  posterUrl?: string;
 }
 
 const SeriesCard = ({
@@ -22,26 +23,27 @@ const SeriesCard = ({
   seasons,
   category,
   status,
+  posterUrl,
 }: SeriesProps) => {
   return (
     <Link href={`/series/${id}`}>
       <div className="group relative bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-xl transition-all duration-300">
         <div className="relative aspect-[2/3] overflow-hidden">
           <img
-            src={image}
+            src={posterUrl}
             alt={title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
           <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
             <Star className="h-3 w-3 text-yellow-500 fill-current" />
             <span className="text-xs font-bold text-white">
-              {rating.toFixed(1)}
+              {rating?.toFixed(1)}
             </span>
           </div>
 
-          <div className="absolute bottom-3 left-3 bg-primary text-white px-2 py-1 rounded-md text-[10px] font-black flex items-center gap-1">
+          {/* <div className="absolute bottom-3 left-3 bg-primary text-white px-2 py-1 rounded-md text-[10px] font-black flex items-center gap-1">
             <Layers size={12} /> {seasons} SEASONS
-          </div>
+          </div> */}
         </div>
 
         <div className="p-4 space-y-1">

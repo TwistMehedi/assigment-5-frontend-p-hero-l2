@@ -16,9 +16,13 @@ import {
 import { registerSchema } from "@/types/zod/auth/zod.register";
 import { useRegisterUserMutation } from "@/redux/api/auth.api";
 import { toast } from "react-toastify";
+import { authClient } from "../../../lib/auth-client";
+import { useDispatch } from "react-redux";
 
 export default function RegisterPage() {
   const [registerUser, { isLoading }] = useRegisterUserMutation();
+
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -28,7 +32,7 @@ export default function RegisterPage() {
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-   const router = useRouter();
+  const router = useRouter();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -59,7 +63,6 @@ export default function RegisterPage() {
       return;
     }
 
-    // setLoading(true);
     try {
       const result = await registerUser(validation.data).unwrap();
       console.log("Registration Successful:", result);
@@ -72,6 +75,21 @@ export default function RegisterPage() {
       if (error.data?.message) {
         toast.error(error.data?.message);
       }
+    }
+  };
+
+  const handleGoogle = async () => {
+    try {
+      console.log("Initiating Google Login...");
+      const data = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: process.env.NEXT_PUBLIC_CLIENT_URL,
+      });
+      if (data?.error) {
+        console.error("Login Error:", data.error);
+      }
+    } catch (error) {
+      console.error("Something went wrong:", error);
     }
   };
 
@@ -276,8 +294,8 @@ export default function RegisterPage() {
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             type="button"
-            onClick={() => console.log("Google Login Clicked")}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-transparent py-3 text-sm font-bold text-[var(--foreground)] transition-all hover:shadow-md"
+            onClick={handleGoogle}
+            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-transparent py-3 text-sm font-bold text-[var(--foreground)] transition-all hover:shadow-md"
           >
             <svg
               className="h-5 w-5"

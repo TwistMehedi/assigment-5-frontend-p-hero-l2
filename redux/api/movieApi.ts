@@ -10,7 +10,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const movieApi = createApi({
   reducerPath: "movieApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/v1/movie/",
+    baseUrl:
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/movie/` ||
+      "http://localhost:5000/api/v1/movie/",
     credentials: "include",
   }),
   tagTypes: ["Categories", "Movie"],
@@ -27,7 +29,7 @@ export const movieApi = createApi({
       },
     ),
 
-    categories: builder.query<IApiResponse<ICategory[]>, void>({
+    categories: builder.query<any, void>({
       query: () => ({
         url: "categories",
         method: "GET",
@@ -75,6 +77,26 @@ export const movieApi = createApi({
     getChannel: builder.query<IApiResponse<IChannel>, string>({
       query: (id) => ({
         url: `channel/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Movie"],
+    }),
+
+    allMovies: builder.query<
+      any,
+      { search: string; category: string; page?: number; limit?: number }
+    >({
+      query: (params) => ({
+        url: "movies",
+        method: "GET",
+        params: params,
+      }),
+      providesTags: ["Movie"],
+    }),
+
+    movie: builder.query({
+      query: (id) => ({
+        url: `movie/${id}`,
         method: "GET",
       }),
       providesTags: ["Movie"],
@@ -136,6 +158,8 @@ export const {
   useUpdateChannelMutation,
   useDeleteChaneleMutation,
   useGetChannelQuery,
+  useAllMoviesQuery,
+  useMovieQuery,
   useUploadMovieMutation,
   useMyMovieQuery,
   useGetMyMoviesQuery,

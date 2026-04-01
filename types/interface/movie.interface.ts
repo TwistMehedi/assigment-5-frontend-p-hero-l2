@@ -21,7 +21,15 @@ export interface IChannel {
 export interface IApiResponse<T> {
   success: boolean;
   message: string;
-  data: T;
+  data: {
+    data: T;
+    meta?: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPage: number;
+    };
+  };
 }
 
 export interface IMoviePayload {
@@ -68,7 +76,7 @@ export interface IMovieResponse {
 export interface IApiMovieResponse<T> {
   success: boolean;
   message: string;
-  data:{
+  data: {
     data: T;
     meta?: {
       page: number;

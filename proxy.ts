@@ -12,7 +12,7 @@ export async function proxy(req: NextRequest) {
   if (sessionToken) {
     try {
       const response = await fetch(
-        `${process.env.BACKEND_HOST_URL}/api/v1/auth/get-session`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/get-session`,
         {
           headers: { cookie: req.headers.get("cookie") || "" },
         },
@@ -20,6 +20,7 @@ export async function proxy(req: NextRequest) {
 
       if (response.ok) {
         const result = await response.json();
+
         userRole = result?.data?.user?.role || null;
       }
     } catch (error) {
@@ -27,7 +28,6 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  // console.log("userRole", userRole);
   const isAdmin = userRole === "ADMIN";
   const isCustomer = userRole === "USER";
   const isProvider = userRole === "CREATOR";
@@ -46,8 +46,6 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-   
-
   return NextResponse.next();
 }
 
@@ -56,6 +54,5 @@ export const config = {
     "/dashboard/admin/:path*",
     "/dashboard/provider/:path*",
     "/dashboard/user/:path*",
-   
   ],
 };

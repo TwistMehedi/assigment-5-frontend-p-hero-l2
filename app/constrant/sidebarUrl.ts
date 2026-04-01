@@ -10,6 +10,7 @@ import {
   BarChart3,
   Video,
   Radio,
+  Library,
 } from "lucide-react";
 
 export const adminSidebarUrl = [
@@ -56,14 +57,9 @@ export const creatorSidebarUrl = [
     href: "/dashboard/provider/series/create",
     icon: Video,
   },
-  {
-    name: "Analytics",
-    href: "/dashboard/provider/analytics",
-    icon: BarChart3,
-  },
-  {
-    name: "Settings",
-    href: "/dashboard/provider/settings",
-    icon: Settings,
-  },
+];
+
+export const userUrl = [
+  { name: "Overview user", href: "/dashboard/user", icon: LayoutDashboard },
+  { name: "Libary", href: "/dashboard/user/library", icon: Library },
 ];

@@ -58,7 +58,6 @@ export default function LoginPage() {
 
     try {
       const result = await loginUser(validation.data).unwrap();
-      console.log("Login Successful:", result);
       dispatch(
         setCredentials({
           user: result?.data?.user,
@@ -72,7 +71,7 @@ export default function LoginPage() {
       toast.success(result?.message);
       router.push("/");
     } catch (error: any) {
-       if (error.data?.message) {
+      if (error.data?.message) {
         toast.error(error.data?.message);
       }
     }

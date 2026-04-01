@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -8,9 +8,7 @@ import {
   Loader2,
   AlertCircle,
   Film,
-  AlignLeft,
   Users,
-  Clock,
   DollarSign,
   Image as ImageIcon,
   Video,
@@ -19,17 +17,31 @@ import {
   Calendar,
   Layers,
   Star,
+  ChevronDown,
 } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { movieUploadSchema } from "@/types/zod/movie/channelSchema";
-import { useUploadMovieMutation } from "@/redux/api/movieApi";
+import {
+  useCategoriesQuery,
+  useUploadMovieMutation,
+} from "@/redux/api/movieApi";
+import { ICategory } from "@/types/interface/movie.interface";
 
 export default function UploadMoviePage() {
   const [fileInputKey, setFileInputKey] = useState(Date.now());
-  const [uploadMovie, { isLoading }] = useUploadMovieMutation();
-
   const router = useRouter();
+
+  const { data: categoriesRes, isLoading: isCategoriesLoading } =
+    useCategoriesQuery(undefined);
+
+  const categoryOptions = useMemo(() => {
+    const categoriesData =
+      categoriesRes?.data?.data || categoriesRes?.data || [];
+    return categoriesData.map((c: ICategory) => c.name);
+  }, [categoriesRes]);
+
+  const [uploadMovie, { isLoading }] = useUploadMovieMutation();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -108,12 +120,11 @@ export default function UploadMoviePage() {
         formattedErrors[issue.path[0] as string] = issue.message;
       });
       setErrors(formattedErrors);
-      console.log("Validation errors:", formattedErrors);
       return;
     }
 
     if (!files.thumbnail || !files.poster || !files.video) {
-      toast.error("All (Thumbnail, Poster, Video, Trailer) Required");
+      toast.error("Thumbnail, Poster, and Video are required");
       return;
     }
 
@@ -152,7 +163,6 @@ export default function UploadMoviePage() {
       setFiles({ thumbnail: null, poster: null, video: null });
       setFileInputKey(Date.now());
     } catch (error: any) {
-      console.error("Upload failed", error);
       toast.error(error.data?.message || "Something went wrong");
     }
   };
@@ -179,6 +189,7 @@ export default function UploadMoviePage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Title */}
             <div className="col-span-2 space-y-1">
               <label className="text-[10px] font-black uppercase text-[var(--foreground)] ml-1 tracking-widest">
                 Movie Title
@@ -199,21 +210,38 @@ export default function UploadMoviePage() {
               <ErrorMessage message={errors.title} />
             </div>
 
+            {/* Genre Select */}
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-[var(--foreground)] ml-1 tracking-widest">
                 Genre
               </label>
               <div className="relative">
                 <Layers
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] z-10"
                   size={18}
                 />
-                <input
+                <select
                   name="genre"
                   value={formData.genre}
                   onChange={handleChange}
-                  className={`w-full bg-[var(--muted)] border ${errors.genre ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none transition-all`}
-                  placeholder="Action, Drama, Sci-Fi..."
+                  className={`w-full bg-[var(--muted)] border ${errors.genre ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all appearance-none cursor-pointer`}
+                >
+                  <option value="" disabled>
+                    Select a genre
+                  </option>
+                  {isCategoriesLoading ? (
+                    <option>Loading...</option>
+                  ) : (
+                    categoryOptions?.map((name: any) => (
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
+                    ))
+                  )}
+                </select>
+                <ChevronDown
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] pointer-events-none"
+                  size={16}
                 />
               </div>
               <ErrorMessage message={errors.genre} />
@@ -230,8 +258,8 @@ export default function UploadMoviePage() {
                 />
                 <input
                   type="date"
-                  value={formData.releaseDate}
                   name="releaseDate"
+                  value={formData.releaseDate}
                   onChange={handleChange}
                   className={`w-full bg-[var(--muted)] border ${errors.releaseDate ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none transition-all`}
                 />
@@ -246,11 +274,11 @@ export default function UploadMoviePage() {
               <div className="relative">
                 <input
                   type="text"
-                  value={formData.duration}
                   name="duration"
+                  value={formData.duration}
                   onChange={handleChange}
-                  className={`w-full bg-[var(--muted)] border ${errors.duration ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none transition-all`}
-                  placeholder="Duration"
+                  className={`w-full bg-[var(--muted)] border ${errors.duration ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 px-4 text-sm focus:outline-none transition-all`}
+                  placeholder="e.g. 2h 30m"
                 />
               </div>
               <ErrorMessage message={errors.duration} />
@@ -319,18 +347,22 @@ export default function UploadMoviePage() {
               </label>
               <div className="relative">
                 <Star
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] z-10"
                   size={18}
                 />
                 <select
                   name="isPremium"
                   value={formData.isPremium}
                   onChange={handleChange}
-                  className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none appearance-none"
+                  className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-xl py-3 pl-10 pr-10 text-sm focus:outline-none appearance-none cursor-pointer"
                 >
                   <option value="false">Free Content</option>
                   <option value="true">Premium Content</option>
                 </select>
+                <ChevronDown
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] pointer-events-none"
+                  size={16}
+                />
               </div>
             </div>
           </div>
@@ -356,10 +388,11 @@ export default function UploadMoviePage() {
               </label>
               <input
                 type="file"
+                accept="image/*"
                 key={fileInputKey}
                 name="thumbnail"
                 onChange={handleFileChange}
-                className="w-full text-xs file:bg-black file:text-white file:rounded-full file:px-4 file:py-2 cursor-pointer"
+                className="w-full cursor-pointer text-xs file:bg-black file:text-white file:rounded-full file:px-4 file:py-2 cursor-pointer"
               />
             </div>
 
@@ -369,10 +402,11 @@ export default function UploadMoviePage() {
               </label>
               <input
                 type="file"
+                accept="image/*"
                 key={fileInputKey}
                 name="poster"
                 onChange={handleFileChange}
-                className="w-full text-xs file:bg-black file:text-white file:rounded-full file:px-4 file:py-2 cursor-pointer"
+                className="w-full cursor-pointer text-xs file:bg-black file:text-white file:rounded-full file:px-4 file:py-2 cursor-pointer"
               />
             </div>
 
@@ -382,10 +416,11 @@ export default function UploadMoviePage() {
               </label>
               <input
                 type="file"
+                accept="video/*"
                 key={fileInputKey}
                 name="video"
                 onChange={handleFileChange}
-                className="w-full text-xs file:bg-black file:text-white file:rounded-full file:px-4 file:py-2 cursor-pointer"
+                className="w-full cursor-pointer text-xs file:bg-black file:text-white file:rounded-full file:px-4 file:py-2 cursor-pointer"
               />
             </div>
           </div>
