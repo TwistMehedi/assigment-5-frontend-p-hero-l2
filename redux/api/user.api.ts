@@ -11,6 +11,37 @@ export const userApi = createApi({
   tagTypes: ["User"],
 
   endpoints: (builder) => ({
+    getAdminDashboard: builder.query({
+      query: () => ({
+        url: "admin",
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
+
+    getAllTransactions: builder.query({
+      query: ({ page, search }) => ({
+        url: "all-transactions",
+        method: "GET",
+        params: { page, searchTerm: search },
+      }),
+      providesTags: ["User"],
+    }),
+
+    getAllMoviesForAdmin: builder.query({
+      query: () => ({
+        url: "all-movies-admin",
+        method: "GET",
+      }),
+    }),
+
+    getAllSeriesForAdmin: builder.query({
+      query: () => ({
+        url: "admin-all-series",
+        method: "GET",
+      }),
+    }),
+
     getProviderDashboard: builder.query({
       query: () => ({
         url: "creator",
@@ -34,11 +65,44 @@ export const userApi = createApi({
       }),
       providesTags: ["User"],
     }),
+
+    users: builder.query({
+      query: (search) => ({
+        url: `users`,
+        method: "GET",
+        params: { search },
+      }),
+      providesTags: ["User"],
+    }),
+
+    updateRole: builder.mutation({
+      query: ({ id, role }) => ({
+        url: `update-user-role`,
+        method: "PATCH",
+        body: { id, role },
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `users/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
 export const {
+  useGetAdminDashboardQuery,
+  useGetAllTransactionsQuery,
+  useGetAllMoviesForAdminQuery,
+  useGetAllSeriesForAdminQuery,
   useGetProviderDashboardQuery,
   useGetSharedUserQuery,
   useMyPurchasedAllQuery,
+  useUsersQuery,
+  useUpdateRoleMutation,
+  useDeleteUserMutation
 } = userApi;

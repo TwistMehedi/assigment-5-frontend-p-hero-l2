@@ -1,11 +1,21 @@
 "use client";
 
-import React from "react";
-import { Star, Play, Lock, Unlock, ShoppingCart, Eye } from "lucide-react";
+import React, { useMemo } from "react";
+import {
+  Star,
+  Play,
+  Lock,
+  Unlock,
+  ShoppingCart,
+  Loader2,
+  PlayCircle,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { IMovieResponse } from "@/types/interface/movie.interface";
-import PaymentButton from "../Payment/PaymentButton";
+import { useCheckPurchaseQuery } from "@/redux/api/payment.api";
+import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 
 const HomeMovieCard = ({
   id,
@@ -16,94 +26,111 @@ const HomeMovieCard = ({
   isPremium,
   videoUrl,
 }: IMovieResponse) => {
+  const router = useRouter();
+
+  const { data: checkResponse, isLoading: isCheckLoading } =
+    useCheckPurchaseQuery(id);
+
+  const isPurchased = useMemo(() => {
+    if (!checkResponse?.data) return false;
+    return (
+      checkResponse.data === true ||
+      checkResponse.data?.itemId === id ||
+      checkResponse.data?.isPurchased === true
+    );
+  }, [checkResponse, id]);
+
+  const handleMovieAction = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isPurchased || !isPremium) {
+      if (videoUrl && videoUrl.startsWith("http")) {
+        window.open(videoUrl, "_blank");
+      } else {
+        router.push(`/watch/${id}`);
+      }
+    } else {
+      router.push(`/checkout/${id}?type=movie`);
+    }
+  };
+
   return (
     <motion.div
-      whileHover={{ y: -10 }}
-      className="group relative bg-card rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-border cursor-pointer"
+      whileHover={{ y: -8 }}
+      className="group relative bg-card rounded-2xl overflow-hidden shadow-lg border border-border cursor-pointer"
     >
       <div className="relative aspect-[2/3] overflow-hidden">
         <img
           src={thumbnailUrl}
           alt={title}
-          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+          className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
         />
 
-        <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
-          {isPremium ? (
-            <div className="flex items-center gap-1 bg-primary text-black text-[9px] font-black px-2 py-1 rounded shadow-lg uppercase tracking-tighter">
-              <Lock size={10} className="fill-current" />
-              Premium
+        <div className="absolute top-3 left-3 z-10">
+          {isPremium && !isPurchased ? (
+            <div className="flex items-center gap-1 bg-primary text-black text-[10px] font-black px-2 py-1 rounded shadow-lg uppercase">
+              <Lock size={12} className="fill-current" /> Premium
             </div>
           ) : (
-            <div className="flex items-center gap-1 bg-green-500 text-white text-[9px] font-black px-2 py-1 rounded shadow-lg uppercase tracking-tighter">
-              <Unlock size={10} className="fill-current" />
-              Free
+            <div className="flex items-center gap-1 bg-green-500 text-white text-[10px] font-black px-2 py-1 rounded shadow-lg uppercase">
+              <Unlock size={12} className="fill-current" />{" "}
+              {isPurchased ? "Owned" : "Free"}
             </div>
           )}
         </div>
 
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="bg-primary p-3 rounded-full scale-50 group-hover:scale-100 transition-transform duration-300 shadow-xl shadow-primary/40">
-            <Play className="h-6 w-6 text-black fill-current" />
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+          <div className="bg-primary p-4 rounded-full scale-50 group-hover:scale-100 transition-transform duration-500 shadow-2xl">
+            <Play className="h-8 w-8 text-black fill-current" />
           </div>
-        </div>
-
-        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-md px-2 py-1 rounded-md flex items-center gap-1">
-          <Star className="h-3 w-3 text-yellow-500 fill-current" />
-          <span className="text-xs font-bold text-white">4.5</span>
         </div>
       </div>
 
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-1">
+      <div className="p-5">
+        <div className="flex justify-between items-center mb-2">
           <p className="text-[10px] uppercase tracking-widest text-primary font-black">
             {genre}
           </p>
-          {isPremium && (
-            <p className="text-[10px] font-black text-white bg-white/10 px-1.5 rounded">
+          {isPremium && !isPurchased && (
+            <p className="text-xs font-black text-white bg-white/10 px-2 py-0.5 rounded">
               ${price}
             </p>
           )}
         </div>
 
         <Link href={`/movies/${id}`}>
-          <h3 className="font-bold text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors uppercase tracking-tight mb-3">
+          <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary transition-colors uppercase mb-4 tracking-tight">
             {title}
           </h3>
         </Link>
 
-        <div className="flex flex-col gap-2 mt-2">
-          {isPremium ? (
-            // <Link href={`/checkout/${id}`}>
-            //   <motion.button
-            //     whileTap={{ scale: 0.95 }}
-            //     className="w-full bg-primary hover:bg-primary/90 text-black text-[10px] font-black py-2 rounded-lg flex items-center justify-center gap-2 uppercase tracking-wider transition-all"
-            //   >
-            //     <ShoppingCart size={14} />
-            //     Buy Now
-            //   </motion.button>
-            // </Link>
-            <PaymentButton
-              itemId={id}
-              itemType="movie"
-              price={price}
-              title={title}
-            />
-          ) : (
-            <Link href={`/movies/${id}`}>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                className="w-full bg-green-500 hover:bg-green-600 text-white text-[10px] font-black py-2 rounded-lg flex items-center justify-center gap-2 uppercase tracking-wider transition-all"
-              >
-                <Eye size={14} />
-                Watch Now
-              </motion.button>
-            </Link>
-          )}
+        <div className="flex flex-col gap-3">
+          <Button
+            onClick={handleMovieAction}
+            disabled={isCheckLoading}
+            className={`w-full h-12 rounded-xl font-black uppercase tracking-wider gap-3 transition-all ${
+              isPurchased || !isPremium
+                ? "bg-green-600 hover:bg-green-700 text-white"
+                : "bg-primary text-black hover:bg-primary/90"
+            }`}
+          >
+            {isCheckLoading ? (
+              <Loader2 className="animate-spin h-5 w-5" />
+            ) : isPurchased || !isPremium ? (
+              <>
+                <PlayCircle size={20} /> Watch Now
+              </>
+            ) : (
+              <>
+                <ShoppingCart size={18} /> Buy Now
+              </>
+            )}
+          </Button>
 
           <Link
             href={`/movies/${id}`}
-            className="text-center text-[9px] uppercase font-black text-muted-foreground hover:text-primary transition-colors py-1"
+            className="text-center text-[10px] uppercase font-bold text-muted-foreground hover:text-primary transition-colors"
           >
             View Details
           </Link>

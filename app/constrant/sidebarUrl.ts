@@ -17,13 +17,17 @@ export const adminSidebarUrl = [
   { name: "Overview", href: "/dashboard/admin", icon: LayoutDashboard },
   { name: "Users", href: "/dashboard/admin/users", icon: Users },
   {
-    name: "Movie Approval",
+    name: "Movies",
     href: "/dashboard/admin/movies",
     icon: Clapperboard,
   },
+  {
+    name: "Series",
+    href: "/dashboard/admin/series",
+    icon: Clapperboard,
+  },
   { name: "Categories", href: "/dashboard/admin/categories", icon: Film },
-  { name: "Revenue", href: "/dashboard/admin/revenue", icon: Ticket },
-  { name: "Settings", href: "/dashboard/admin/settings", icon: Settings },
+  { name: "Transactions", href: "/dashboard/admin/transactions", icon: Ticket },
 ];
 
 export const creatorSidebarUrl = [

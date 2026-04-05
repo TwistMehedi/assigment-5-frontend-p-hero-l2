@@ -1,20 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Plus,
-  Trash2,
-  Edit3,
-  Film,
-  Search,
-  AlertCircle,
-  Check,
-} from "lucide-react";
+import { Plus, Trash2, Edit3, Film, AlertCircle, Check, X } from "lucide-react";
 import {
   useCategoriesQuery,
   useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
 } from "@/redux/api/movieApi";
-
 import { toast } from "react-toastify";
 import { ICategory } from "@/types/interface/movie.interface";
 
@@ -23,32 +16,52 @@ export default function CategoryManagement() {
   const [newCategory, setNewCategory] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+
   const { data: categoryResponse, isLoading: isFetching } =
     useCategoriesQuery();
   const [createCategory, { isLoading }] = useCreateCategoryMutation();
+  const [updateCategory] = useUpdateCategoryMutation();
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   const categories = categoryResponse?.data || [];
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
   if (!mounted) return null;
 
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCategory.trim()) return;
-
     try {
-      const result = await createCategory({ name: newCategory }).unwrap();
-      if (result.success) {
-        toast.success(result.message);
-      }
+      await createCategory({ name: newCategory }).unwrap();
+      toast.success("Genre created!");
+      setNewCategory("");
+      setIsAdding(false);
     } catch (error: any) {
-      toast.error(error?.data?.message || "Something went wrong!");
+      toast.error(error?.data?.message || "Error!");
     }
+  };
 
-    setIsAdding(false);
+  const handleUpdate = async (id: string) => {
+    try {
+      await updateCategory({ id, name: editingName }).unwrap();
+      toast.success("Updated!");
+      setEditingId(null);
+    } catch (error: any) {
+      toast.error("Failed to update");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteCategory(id).unwrap();
+      toast.success("Deleted!");
+    } catch (error: any) {
+      toast.error("Deletion failed");
+    }
   };
 
   return (
@@ -62,16 +75,11 @@ export default function CategoryManagement() {
             Organize content categories
           </p>
         </div>
-
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="flex items-center cursor-pointer gap-2 bg-[var(--primary)] text-black px-5 py-2.5 rounded-xl font-bold text-xs uppercase transition-transform active:scale-95 shadow-lg shadow-[var(--primary)]/20"
+          className="flex items-center cursor-pointer gap-2 bg-[var(--primary)] text-black px-5 py-2.5 rounded-xl font-bold text-xs uppercase shadow-lg"
         >
-          {isAdding ? (
-            <Plus className="rotate-45 transition-transform" />
-          ) : (
-            <Plus />
-          )}
+          <Plus className={isAdding ? "rotate-45" : ""} />{" "}
           {isAdding ? "Close" : "Add New Genre"}
         </button>
       </div>
@@ -82,14 +90,13 @@ export default function CategoryManagement() {
             type="text"
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Enter genre name (e.g. Comedy)"
-            className="flex-1 bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-            autoFocus
+            placeholder="Comedy, Action..."
+            className="flex-1 bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-[var(--primary)] outline-none"
           />
           <button
             disabled={isLoading}
             onClick={handleAddCategory}
-            className="bg-[var(--primary)] cursor-pointer text-black px-4 py-2 rounded-xl font-bold text-xs uppercase flex items-center gap-2"
+            className="bg-[var(--primary)] text-black px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2"
           >
             <Check size={16} /> {isLoading ? "Creating..." : "Create"}
           </button>
@@ -98,43 +105,74 @@ export default function CategoryManagement() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {isFetching ? (
-          <p className="text-xs font-bold uppercase animate-pulse">
-            Loading Categories...
-          </p>
+          <p className="text-xs font-bold animate-pulse">Loading...</p>
         ) : categories.length > 0 ? (
           categories.map((cat: ICategory) => (
             <div
               key={cat.id}
-              className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 flex items-center justify-between group hover:border-[var(--primary)]/50 transition-colors shadow-sm"
+              className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 flex items-center justify-between group hover:border-[var(--primary)]/50 transition-colors"
             >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-[var(--muted)] rounded-xl text-[var(--muted-foreground)] group-hover:bg-[var(--primary)]/10 group-hover:text-[var(--primary)] transition-colors">
+              <div className="flex items-center gap-4 flex-1">
+                <div className="p-3 bg-[var(--muted)] rounded-xl text-[var(--muted-foreground)] group-hover:text-[var(--primary)]">
                   <Film size={20} />
                 </div>
-                <div>
-                  <h3 className="font-bold text-sm uppercase tracking-tight">
-                    {cat.name}
-                  </h3>
-                  <p className="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-widest">
-                    {cat.movieCount || 0} Movies Linked
-                  </p>
-                </div>
+
+                {editingId === cat.id ? (
+                  <input
+                    className="bg-[var(--background)] border border-[var(--primary)] rounded-lg px-2 py-1 text-sm outline-none w-full"
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    autoFocus
+                  />
+                ) : (
+                  <div>
+                    <h3 className="font-bold text-sm uppercase">{cat.name}</h3>
+                  </div>
+                )}
               </div>
 
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button className="p-2 hover:bg-[var(--muted)] rounded-lg text-blue-500 transition-colors">
-                  <Edit3 size={16} />
-                </button>
-                <button className="p-2 hover:bg-red-500/10 rounded-lg text-red-500 transition-colors">
-                  <Trash2 size={16} />
-                </button>
+              <div className="flex items-center gap-1">
+                {editingId === cat.id ? (
+                  <>
+                    <button
+                      onClick={() => handleUpdate(cat.id)}
+                      className="p-2 cursor-pointer text-green-500"
+                    >
+                      <Check size={18} />
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="p-2 cursor-pointer text-red-500"
+                    >
+                      <X size={18} />
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex  transition-opacity">
+                    <button
+                      onClick={() => {
+                        setEditingId(cat.id);
+                        setEditingName(cat.name);
+                      }}
+                      className="p-2 cursor-pointer text-blue-500 hover:bg-[var(--muted)] rounded-lg"
+                    >
+                      <Edit3 size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(cat.id)}
+                      className="p-2 cursor-pointer text-red-500 hover:bg-red-500/10 rounded-lg"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))
         ) : (
           <div className="col-span-full h-40 flex flex-col items-center justify-center border-2 border-dashed border-[var(--border)] rounded-3xl opacity-50">
             <AlertCircle size={32} className="mb-2" />
-            <p className="font-bold uppercase tracking-widest text-xs">
+            <p className="text-xs font-bold uppercase tracking-widest">
               No Categories Found
             </p>
           </div>

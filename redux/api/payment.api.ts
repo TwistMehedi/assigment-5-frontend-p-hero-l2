@@ -21,7 +21,7 @@ export const paymentApi = createApi({
 
     verify: builder.query({
       query: (sessionId) => ({
-        url: `verify?session_id=${sessionId}`,
+        url: `verify?sessionId=${sessionId}`,
         method: "GET",
       }),
     }),

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 
 const PaymentSuccess = () => {
   const searchParams = useSearchParams();
+
   const sessionId = searchParams.get("session_id");
   const router = useRouter();
 
@@ -17,9 +18,7 @@ const PaymentSuccess = () => {
     isLoading,
     isSuccess,
     isError,
-  } = useVerifyQuery(sessionId, {
-    skip: !sessionId,
-  });
+  } = useVerifyQuery(sessionId as string, { skip: !sessionId });
 
   const purchasedItem = response?.data;
 

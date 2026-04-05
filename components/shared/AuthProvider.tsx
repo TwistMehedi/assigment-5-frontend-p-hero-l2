@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { logout, setCredentials } from "@/redux/features/auth.slice";
+import { setCredentials } from "@/redux/features/auth.slice";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -23,8 +23,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           },
         }),
       );
-    } else if (!isPending && !session) {
-      dispatch(logout());
     }
   }, [session, dispatch, isPending]);
 

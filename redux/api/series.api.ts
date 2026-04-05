@@ -4,7 +4,6 @@ import {
   ISeries,
 } from "@/types/interface/series.interface";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { updateSeries } from "../../../backend/src/modules/series/series.controller";
 
 export const seriesApi = createApi({
   reducerPath: "seriesApi",
@@ -96,6 +95,41 @@ export const seriesApi = createApi({
       }),
       invalidatesTags: ["Series"],
     }),
+
+    updateSeriesAdmin: builder.mutation({
+      query: ({ id, isPremium }) => ({
+        url: "update-series-admin",
+        method: "PATCH",
+        body: { id, isPremium },
+      }),
+      invalidatesTags: ["Series"],
+    }),
+
+    deleteSeriesAdmin: builder.mutation({
+      query: (id) => ({
+        url: "delete-series-admin",
+        method: "DELETE",
+        body: { id },
+      }),
+      invalidatesTags: ["Series"],
+    }),
+
+    updateEpisode: builder.mutation({
+      query: (data) => ({
+        url: "update-episode",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Series"],
+    }),
+
+    deleteEpisode: builder.mutation({
+      query: (id) => ({
+        url: `delete-episode/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Series"],
+    }),
   }),
 });
 
@@ -109,4 +143,8 @@ export const {
   useCreateSeasonMutation,
   useSingleSeasonQuery,
   useAddEpisodeMutation,
+  useUpdateSeriesAdminMutation,
+  useDeleteSeriesAdminMutation,
+  useUpdateEpisodeMutation,
+  useDeleteEpisodeMutation,
 } = seriesApi;

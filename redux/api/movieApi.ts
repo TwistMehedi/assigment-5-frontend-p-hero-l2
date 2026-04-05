@@ -147,6 +147,37 @@ export const movieApi = createApi({
       }),
       invalidatesTags: ["Movie"],
     }),
+    updateCategory: builder.mutation({
+      query: ({ id, name }) => ({
+        url: `categorie/${id}`,
+        method: "PUT",
+        body: { name },
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+
+    deleteCategory: builder.mutation({
+      query: (id) => ({
+        url: `categorie/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+    updateMovieAdmin: builder.mutation({
+      query: ({ id, title, isPremium }) => ({
+        url: `update-movie-admin/${id}`,
+        method: "PUT",
+        body: { title, isPremium },
+      }),
+      invalidatesTags: ["Movie"],
+    }),
+    deleteMovieAdmin: builder.mutation({
+      query: (id) => ({
+        url: `delete-movie-admin/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Movie"],
+    }),
   }),
 });
 
@@ -165,4 +196,8 @@ export const {
   useGetMyMoviesQuery,
   useUpdateMovieMutation,
   useDeleteMovieMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+  useUpdateMovieAdminMutation,
+  useDeleteMovieAdminMutation,
 } = movieApi;
