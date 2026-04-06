@@ -16,7 +16,7 @@ const UserDashboard = () => {
   const { data: response, isLoading } = useGetSharedUserQuery({});
   const userData = response?.data;
 
-  console.log(userData);
+  
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -103,30 +103,6 @@ const UserDashboard = () => {
                 </p>
               </div>
             )}
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <h2 className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
-            <Heart size={20} className="text-red-500" /> Watchlist
-          </h2>
-          <div className="bg-card border border-border rounded-[2.5rem] p-6 space-y-4 shadow-sm">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded-2xl transition-colors cursor-pointer"
-              >
-                <div className="h-12 w-12 rounded-xl bg-muted shrink-0 overflow-hidden"></div>
-                <div className="min-w-0">
-                  <p className="font-bold text-xs truncate">
-                    Future Movie Name {i}
-                  </p>
-                  <p className="text-[9px] font-black text-primary uppercase">
-                    Trending Now
-                  </p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </div>
