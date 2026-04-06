@@ -27,6 +27,7 @@ import {
   creatorSidebarUrl,
   userUrl,
 } from "@/app/constrant/sidebarUrl";
+import LogoutBtn from "./shared/LogoutBtn";
 
 export default function CustomSidebar() {
   const [mounted, setMounted] = React.useState(false);
@@ -136,9 +137,7 @@ export default function CustomSidebar() {
               {user?.role}
             </span>
           </div>
-          <button className="ml-auto p-1.5 text-[var(--muted-foreground)] hover:text-red-500 transition-colors group-data-[collapsible=icon]:hidden">
-            <LogOut size={16} />
-          </button>
+          <LogoutBtn />
         </div>
       </SidebarFooter>
     </Sidebar>

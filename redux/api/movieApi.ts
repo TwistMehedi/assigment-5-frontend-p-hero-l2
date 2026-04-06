@@ -178,6 +178,14 @@ export const movieApi = createApi({
       }),
       invalidatesTags: ["Movie"],
     }),
+
+    latestMovies: builder.query({
+      query: () => ({
+        url: "latest-movies",
+        method: "GET",
+      }),
+      providesTags: ["Movie"],
+    }),
   }),
 });
 
@@ -200,4 +208,5 @@ export const {
   useDeleteCategoryMutation,
   useUpdateMovieAdminMutation,
   useDeleteMovieAdminMutation,
+  useLatestMoviesQuery,
 } = movieApi;

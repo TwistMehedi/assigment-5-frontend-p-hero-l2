@@ -2,15 +2,24 @@
 
 import { authClient } from "@/lib/auth-client";
 import { setCredentials } from "@/redux/features/auth.slice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: session, isPending } = authClient.useSession();
+
+  const [isMounted, setIsMounted] = useState(false);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isPending && session?.user) {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isPending || !isMounted) return;
+
+    if (session?.user) {
       dispatch(
         setCredentials({
           user: {
@@ -24,7 +33,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }),
       );
     }
-  }, [session, dispatch, isPending]);
+  }, [session, isPending, isMounted]);
+
+  if (!isMounted) return null;
 
   return <>{children}</>;
 };

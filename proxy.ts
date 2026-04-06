@@ -7,6 +7,10 @@ export async function proxy(req: NextRequest) {
     req.cookies.get("better-auth.session_token")?.value ||
     req.cookies.get("__Secure-better-auth.session_token")?.value;
 
+  if (!sessionToken && pathname.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
   let userRole = null;
 
   if (sessionToken) {
@@ -15,6 +19,7 @@ export async function proxy(req: NextRequest) {
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/get-session`,
         {
           headers: { cookie: req.headers.get("cookie") || "" },
+          cache: "no-store",
         },
       );
 
@@ -46,6 +51,10 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
+  if (pathname.startsWith("/dashboard") && !userRole) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
   return NextResponse.next();
 }
 
@@ -54,5 +63,6 @@ export const config = {
     "/dashboard/admin/:path*",
     "/dashboard/provider/:path*",
     "/dashboard/user/:path*",
+    "/dashboard/:path*",
   ],
 };

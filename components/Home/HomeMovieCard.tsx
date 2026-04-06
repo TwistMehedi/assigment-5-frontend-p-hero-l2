@@ -23,7 +23,10 @@ const HomeMovieCard = ({
   thumbnailUrl,
   genre,
   price,
+  rating,
   isPremium,
+  channels,
+  user,
   videoUrl,
 }: IMovieResponse) => {
   const router = useRouter();
@@ -98,13 +101,16 @@ const HomeMovieCard = ({
             </p>
           )}
         </div>
-
         <Link href={`/movies/${id}`}>
           <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary transition-colors uppercase mb-4 tracking-tight">
             {title}
           </h3>
         </Link>
-
+        {user?.name && (
+          <p className="text-muted-foreground text-xs font-medium">
+            {user?.name}
+          </p>
+        )}
         <div className="flex flex-col gap-3">
           <Button
             onClick={handleMovieAction}

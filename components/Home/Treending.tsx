@@ -1,82 +1,68 @@
-import HomeMovieCard from "@/components/Home/HomeMovieCard";
-import React from "react";
+"use client";
 
-const trendingMovies = [
-  {
-    id: 1,
-    title: "The Dark Knight",
-    rating: 9.0, // 1-10 Scale
-    reviews: 1250,
-    category: "Action",
-    image:
-      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=500",
-  },
-  {
-    id: 2,
-    title: "Interstellar",
-    rating: 8.7,
-    reviews: 980,
-    category: "Sci-Fi",
-    image:
-      "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=500",
-  },
-  {
-    id: 3,
-    title: "Inception",
-    rating: 8.8,
-    reviews: 1100,
-    category: "Thriller",
-    image:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=500",
-  },
-  {
-    id: 4,
-    title: "The Joker",
-    rating: 8.4,
-    reviews: 850,
-    category: "Drama",
-    image:
-      "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=500",
-  },
-  {
-    id: 5,
-    title: "Avengers: Endgame",
-    rating: 8.4,
-    reviews: 2100,
-    category: "Action",
-    image:
-      "https://images.unsplash.com/photo-1608889175123-8ee362201f81?q=80&w=500",
-  },
-];
+import React from "react";
+import HomeMovieCard from "@/components/Home/HomeMovieCard";
+import { useLatestMoviesQuery } from "@/redux/api/movieApi";
+import { Loader2, Film } from "lucide-react";
+import Link from "next/link";
 
 const Treending = () => {
+  const { data: response, isLoading } = useLatestMoviesQuery(undefined);
+
+  const movies = response?.data || [];
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Loader2 className="animate-spin text-primary" size={40} />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 mt-16 relative z-20">
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
         <div>
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white uppercase italic">
             Trending <span className="text-primary">Movies</span>
           </h2>
-          <p className="text-muted-foreground mt-2">
-            Most rated movies this week
+          <p className="text-muted-foreground mt-2 font-medium">
+            Most rated and newly arrived movies this week
           </p>
         </div>
-        <button className="px-5 py-2 rounded-full border border-primary text-primary font-semibold hover:bg-primary hover:text-white transition-all">
+        <Link
+          href={"/movies"}
+          className="w-fit px-6 py-2 rounded-xl border-2 border-primary text-primary font-black uppercase tracking-tighter hover:bg-primary hover:text-black transition-all active:scale-95"
+        >
           Explore All
-        </button>
+        </Link>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
-        {trendingMovies.map((movie) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {movies.map((movie: any) => (
           <HomeMovieCard
             key={movie.id}
+            id={movie.id}
             title={movie.title}
-            image={movie.image}
-            rating={movie.rating}
-            category={movie.category}
+            videoUrl={movie.videoUrl || movie.videoUrl}
+            rating={movie.averageRating || 0}
+            genre={movie.genre}
+            isPremium={movie.isPremium}
+            price={movie.price}
+            channels={movie.channels}
+            user={movie.user}
           />
         ))}
       </div>
+
+      {!isLoading && movies.length === 0 && (
+        <div className="text-center py-20 bg-muted/10 rounded-[2rem] border-2 border-dashed border-border">
+          <Film className="mx-auto text-muted-foreground/30 mb-4" size={48} />
+          <p className="text-muted-foreground font-bold uppercase tracking-widest">
+            No trending movies found
+          </p>
+        </div>
+      )}
     </div>
   );
 };

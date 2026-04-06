@@ -58,19 +58,24 @@ export interface IMoviePayload {
 export interface IMovieResponse {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   genre: string;
-  director: string;
-  cast: string[];
-  duration: number;
-  releaseDate: Date;
+  director?: string;
+  rating: string;
+  cast?: string[];
+  duration?: number;
+  releaseDate?: Date;
   price: number;
   isPremium: boolean;
-  thumbnailUrl: string;
-  posterUrl: string;
-  videoUrl: string;
-  createdAt: string;
-  updatedAt: string;
+  thumbnailUrl?: string;
+  posterUrl?: string;
+  videoUrl?: string;
+  channels?: string[];
+  user: {
+    name?: string;
+  };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IApiMovieResponse<T> {

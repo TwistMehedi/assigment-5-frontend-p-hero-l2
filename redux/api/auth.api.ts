@@ -8,6 +8,7 @@ export const authApi = createApi({
       "http://localhost:5000/api/v1/auth/",
     credentials: "include",
   }),
+  tagTypes: ["Auth"],
   endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (registerData) => ({
@@ -15,6 +16,7 @@ export const authApi = createApi({
         method: "POST",
         body: registerData,
       }),
+      invalidatesTags: ["Auth"],
     }),
 
     verifyEmail: builder.mutation({
@@ -23,6 +25,7 @@ export const authApi = createApi({
         method: "POST",
         body: { email, otp },
       }),
+      invalidatesTags: ["Auth"],
     }),
 
     loginUser: builder.mutation({
@@ -31,6 +34,7 @@ export const authApi = createApi({
         method: "POST",
         body: fromData,
       }),
+      invalidatesTags: ["Auth"],
     }),
 
     forgotPassword: builder.mutation({
@@ -39,6 +43,7 @@ export const authApi = createApi({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Auth"],
     }),
 
     resetPassword: builder.mutation({
@@ -49,6 +54,15 @@ export const authApi = createApi({
           body: data,
         };
       },
+      invalidatesTags: ["Auth"],
+    }),
+
+    logOutUser: builder.mutation({
+      query: () => ({
+        url: "logout-user",
+        method: "POST",
+      }),
+      invalidatesTags: ["Auth"],
     }),
   }),
 });
@@ -59,4 +73,5 @@ export const {
   useLoginUserMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useLogOutUserMutation,
 } = authApi;
