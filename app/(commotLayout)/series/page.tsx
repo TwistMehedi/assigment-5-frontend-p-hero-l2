@@ -34,12 +34,14 @@ const SeriesPage = () => {
     limit: 5,
   });
 
+
+
   const allSeries = response?.data?.data || [];
   const pagination = response?.data?.meta;
   const { totalPage = 1 } = pagination || {};
 
-  // console.log("allSeries", allSeries);
-
+ console.log(allSeries);
+ 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });

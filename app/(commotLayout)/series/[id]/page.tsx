@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react"; // useState যোগ করা হয়েছে
+import React, { useMemo, useState } from "react";
 import {
   Star,
   Tv,
@@ -16,17 +16,22 @@ import { Button } from "@/components/ui/button";
 import { useSeriesQuery } from "@/redux/api/series.api";
 import { useParams, useRouter } from "next/navigation";
 import { useCheckPurchaseQuery } from "@/redux/api/payment.api";
+import ReviewSection from "@/components/ReviewSection";
 
 const SeriesDetails = () => {
   const { id } = useParams();
   const router = useRouter();
 
-  // সিলেক্টেড সিজন রাখার জন্য স্টেট
   const [selectedSeason, setSelectedSeason] = useState<any>(null);
 
-  const { data: response, isLoading: isSeriesLoading } =
-    useSeriesQuery<any>(id);
+  const {
+    data: response,
+    isLoading: isSeriesLoading,
+    refetch,
+  } = useSeriesQuery<any>(id);
   const series = response?.data;
+
+  console.log(series);
 
   const { data: checkResponse, isLoading: isCheckLoading } =
     useCheckPurchaseQuery(id as string, {
@@ -48,11 +53,9 @@ const SeriesDetails = () => {
     }
   };
 
-  // সিজন কার্ডে ক্লিক করলে যা হবে
   const handleSeasonClick = (season: any) => {
     if (isPurchased || !series?.isPremium) {
       setSelectedSeason(season);
-      // আপনি চাইলে সরাসরি স্ক্রল করে এপিসোড সেকশনে নিয়ে যেতে পারেন
       window.scrollTo({ top: 800, behavior: "smooth" });
     } else {
       router.push(`/checkout/${id}?type=series`);
@@ -74,7 +77,6 @@ const SeriesDetails = () => {
 
   return (
     <div className="min-h-screen pb-20 bg-background text-foreground">
-      {/* Hero Section */}
       <div className="relative h-[40vh] md:h-[60vh] w-full">
         <img
           src={series?.posterUrl}
@@ -87,14 +89,14 @@ const SeriesDetails = () => {
       <div className="container mx-auto px-4 -mt-20 md:-mt-32 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-8 space-y-12">
-            {/* Series Info */}
             <div className="space-y-4 text-center lg:text-left">
               <h1 className="text-4xl md:text-7xl font-black uppercase italic leading-none">
                 {series?.title}
               </h1>
               <div className="flex flex-wrap justify-center lg:justify-start gap-4 items-center text-xs font-bold uppercase">
                 <span className="flex items-center gap-1 text-yellow-500 bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20">
-                  <Star className="h-3 w-3 fill-current" /> 9.5 Rating
+                  <Star className="h-3 w-3 fill-current" />{" "}
+                  {series?.averageRating}/10 Rating
                 </span>
                 <span className="flex items-center gap-1 text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
                   <Tv className="h-3 w-3" /> {series?.seasons?.length || 0}{" "}
@@ -106,7 +108,6 @@ const SeriesDetails = () => {
               </p>
             </div>
 
-            {/* Explore Seasons Section */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 border-l-4 border-primary pl-4">
                 <h3 className="text-2xl font-black uppercase italic tracking-tighter">
@@ -140,7 +141,6 @@ const SeriesDetails = () => {
               </div>
             </div>
 
-            {/* --- Episode List Section --- */}
             {(isPurchased || !series?.isPremium) && selectedSeason && (
               <div className="space-y-6 pt-10 border-t border-border animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="flex items-center justify-between">
@@ -185,7 +185,6 @@ const SeriesDetails = () => {
             )}
           </div>
 
-          {/* Right Sidebar (Purchase Card) */}
           <div className="lg:col-span-4">
             <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-2xl sticky top-24">
               <div className="p-6 space-y-6">
@@ -207,7 +206,7 @@ const SeriesDetails = () => {
                 <Button
                   onClick={handleAction}
                   disabled={isCheckLoading}
-                  className={`w-full h-14 rounded-2xl font-black text-xs gap-3 uppercase tracking-widest ${isPurchased || !series?.isPremium ? "bg-green-600 hover:bg-green-700 text-white" : "bg-primary hover:bg-white text-black"}`}
+                  className={`w-full cursor-pointer h-14 rounded-2xl font-black text-xs gap-3 uppercase tracking-widest ${isPurchased || !series?.isPremium ? "bg-green-600 hover:bg-green-700 text-white" : "bg-primary hover:bg-white text-black"}`}
                 >
                   {isCheckLoading ? (
                     <Loader2 className="animate-spin" />
@@ -239,6 +238,13 @@ const SeriesDetails = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="lg:col-span-8">
+            <ReviewSection
+              itemId={id as string}
+              type="SERIES"
+              refetch={refetch}
+            />
           </div>
         </div>
       </div>

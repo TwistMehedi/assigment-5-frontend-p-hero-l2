@@ -12,17 +12,17 @@ import {
   PlayCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import RatingSystem from "@/components/movie/RatingSystem";
 import { useParams, useRouter } from "next/navigation";
 import { useMovieQuery } from "@/redux/api/movieApi";
 import { motion } from "framer-motion";
 import { useCheckPurchaseQuery } from "@/redux/api/payment.api";
+import ReviewSection from "@/components/ReviewSection";
 
 const MovieDetailsPage = () => {
   const { id } = useParams();
   const router = useRouter();
 
-  const { data: response, isLoading, isError } = useMovieQuery(id);
+  const { data: response, isLoading, isError, refetch } = useMovieQuery(id);
   const movie = response?.data;
 
   const { data: checkResponse, isLoading: isCheckLoading } =
@@ -128,7 +128,8 @@ const MovieDetailsPage = () => {
 
               <div className="flex flex-wrap gap-4 text-sm font-bold">
                 <span className="flex items-center gap-1 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-3 py-1 rounded-full uppercase">
-                  <Star className="h-4 w-4 fill-current" /> 8.5 / 10
+                  <Star className="h-4 w-4 fill-current" />{" "}
+                  {movie.averageRating} / 10
                 </span>
                 <span className="flex items-center gap-1 bg-muted px-3 py-1 rounded-full text-muted-foreground uppercase">
                   <Calendar className="h-4 w-4" />{" "}
@@ -143,27 +144,11 @@ const MovieDetailsPage = () => {
                 {movie.description}
               </p>
             </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              className="bg-card p-8 rounded-3xl border border-border shadow-sm space-y-6 mt-12"
-            >
-              <div className="flex items-center gap-2 font-black text-2xl italic uppercase tracking-tighter">
-                <MessageSquare className="text-primary h-7 w-7" /> Rate & Review
-              </div>
-              <RatingSystem onRate={(val) => console.log("Rated:", val)} />
-              <textarea
-                className="w-full h-32 p-4 bg-background border border-border rounded-2xl outline-none"
-                placeholder="Share your thoughts..."
-              />
-              <Button
-                variant="outline"
-                className="font-black border-primary text-primary hover:bg-primary hover:text-white uppercase tracking-widest h-12 px-8"
-              >
-                Submit Review
-              </Button>
-            </motion.div>
+            <ReviewSection
+              itemId={id as string}
+              type="MOVIE"
+              refetch={refetch}
+            />
           </div>
         </div>
       </div>

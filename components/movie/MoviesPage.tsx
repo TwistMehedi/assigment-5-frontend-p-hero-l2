@@ -12,14 +12,17 @@ import {
 import { useAllMoviesQuery, useCategoriesQuery } from "@/redux/api/movieApi";
 import { ICategory, IMovieResponse } from "@/types/interface/movie.interface";
 import HomeMovieCard from "../Home/HomeMovieCard";
+import { useSearchParams } from "next/navigation";
 
 const MoviesPage = () => {
+  const searchParams = useSearchParams();
+
+  const filters = searchParams.get("category") || "";
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: categoriesRes} =
-    useCategoriesQuery(undefined);
+  const { data: categoriesRes } = useCategoriesQuery(undefined);
 
   const categories = useMemo(() => {
     const categoriesData =
@@ -28,7 +31,7 @@ const MoviesPage = () => {
   }, [categoriesRes]);
 
   const { data: moviesRes, isLoading: isMoviesLoading } = useAllMoviesQuery({
-    search: searchQuery,
+    search: searchQuery || filters,
     category: selectedCategory,
     page: currentPage,
     limit: 10,

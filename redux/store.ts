@@ -7,6 +7,7 @@ import { movieApi } from "./api/movieApi";
 import { seriesApi } from "./api/series.api";
 import { paymentApi } from "./api/payment.api";
 import { userApi } from "./api/user.api";
+import { reviewApi } from "./api/review.api";
 
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   [seriesApi.reducerPath]: seriesApi.reducer,
   [paymentApi.reducerPath]: paymentApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
+  [reviewApi.reducerPath]: reviewApi.reducer,
 });
 
 const persistConfig = {
@@ -36,6 +38,7 @@ export const store = configureStore({
       seriesApi.middleware,
       paymentApi.middleware,
       userApi.middleware,
+      reviewApi.middleware,
     ),
 });
 

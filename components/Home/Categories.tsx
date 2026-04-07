@@ -30,9 +30,9 @@ const Categories = () => {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-        {genres.map((genre: any) => (
+        {genres.map((genre: any, idx: any) => (
           <Link
-            key={genre.id || genre.name}
+            key={idx || genre.name}
             href={`/movies?category=${genre.name}`}
             className="relative group h-40 flex flex-col justify-between p-6 rounded-3xl border border-border bg-gradient-to-br from-card to-card/50 hover:to-primary/10 hover:border-primary/40 transition-all duration-500 shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden"
           >
@@ -49,6 +49,7 @@ const Categories = () => {
                 </h3>
                 <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mt-1 bg-secondary/50 py-1 px-2 rounded-lg inline-block">
                   {genre.count || "0"}
+                  {console.log(genre)}
                 </p>
               </div>
             </div>

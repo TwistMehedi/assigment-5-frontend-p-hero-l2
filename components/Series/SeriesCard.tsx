@@ -1,14 +1,13 @@
-// src/components/Series/SeriesCard.tsx
 
-import React from "react";
 import Link from "next/link";
-import { Star, Tv, Layers } from "lucide-react";
+import { Star, Tv } from "lucide-react";
 
 interface SeriesProps {
   id: number;
   title: string;
   image: string;
   rating: number;
+  averageRating?: number;
   seasons: number;
   category: string;
   status?: string;
@@ -21,6 +20,7 @@ const SeriesCard = ({
   image,
   rating,
   seasons,
+  averageRating,
   category,
   status,
   posterUrl,
@@ -37,13 +37,9 @@ const SeriesCard = ({
           <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
             <Star className="h-3 w-3 text-yellow-500 fill-current" />
             <span className="text-xs font-bold text-white">
-              {rating?.toFixed(1)}
+              {averageRating}/10
             </span>
           </div>
-
-          {/* <div className="absolute bottom-3 left-3 bg-primary text-white px-2 py-1 rounded-md text-[10px] font-black flex items-center gap-1">
-            <Layers size={12} /> {seasons} SEASONS
-          </div> */}
         </div>
 
         <div className="p-4 space-y-1">
