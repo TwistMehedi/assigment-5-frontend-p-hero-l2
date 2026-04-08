@@ -49,7 +49,7 @@ const Categories = () => {
                 </h3>
                 <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mt-1 bg-secondary/50 py-1 px-2 rounded-lg inline-block">
                   {genre.count || "0"}
-                  {console.log(genre)}
+                  
                 </p>
               </div>
             </div>

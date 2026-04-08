@@ -12,6 +12,8 @@ import {
   Loader2,
   UserCheck,
   AlertCircle,
+  EyeOff,
+  Eye,
 } from "lucide-react";
 import { registerSchema } from "@/types/zod/auth/zod.register";
 import { useRegisterUserMutation } from "@/redux/api/auth.api";
@@ -30,6 +32,8 @@ export default function RegisterPage() {
     password: "",
     role: "",
   });
+
+  const [showCurrent, setShowCurrent] = useState(false);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
@@ -68,10 +72,7 @@ export default function RegisterPage() {
       console.log("Registration Successful:", result);
       toast.success(result.message || "Registration successful");
       router.push("/verify");
-      // setLoading(false);
     } catch (error: any) {
-      // setLoading(false);
-      console.error("Registration failed", error);
       if (error.data?.message) {
         toast.error(error.data?.message);
       }
@@ -137,7 +138,7 @@ export default function RegisterPage() {
                 type="text"
                 name="name"
                 className={`w-full bg-[var(--muted)] border ${errors.name ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all font-medium`}
-                placeholder="Ex: Mehedi Hasan"
+                placeholder="Ex: Enter Your Name"
                 onChange={handleChange}
               />
             </div>
@@ -168,7 +169,7 @@ export default function RegisterPage() {
                 type="email"
                 name="email"
                 className={`w-full bg-[var(--muted)] border ${errors.email ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all font-medium`}
-                placeholder="mehedi@example.com"
+                placeholder="enteryourmail@example.com"
                 onChange={handleChange}
               />
             </div>
@@ -196,12 +197,19 @@ export default function RegisterPage() {
                 size={18}
               />
               <input
-                type="password"
+                type={showCurrent ? "text" : "password"}
                 name="password"
                 className={`w-full bg-[var(--muted)] border ${errors.password ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all font-medium`}
                 placeholder="••••••••"
                 onChange={handleChange}
               />
+              <button
+                type="button"
+                onClick={() => setShowCurrent(!showCurrent)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition"
+              >
+                {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
             <AnimatePresence>
               {errors.password && (

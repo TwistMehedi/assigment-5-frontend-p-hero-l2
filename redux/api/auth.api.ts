@@ -57,10 +57,28 @@ export const authApi = createApi({
       invalidatesTags: ["Auth"],
     }),
 
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: "change-password",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
     logOutUser: builder.mutation({
       query: () => ({
         url: "logout-user",
         method: "POST",
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
+    socialLogin: builder.mutation({
+      query: (session) => ({
+        url: "social-login",
+        method: "POST",
+        body: session,
       }),
       invalidatesTags: ["Auth"],
     }),
@@ -73,5 +91,7 @@ export const {
   useLoginUserMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useChangePasswordMutation,
   useLogOutUserMutation,
+  useSocialLoginMutation,
 } = authApi;

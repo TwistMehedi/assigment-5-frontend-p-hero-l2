@@ -11,6 +11,7 @@ import {
   Video,
   Radio,
   Library,
+  User,
 } from "lucide-react";
 
 export const adminSidebarUrl = [
@@ -28,6 +29,11 @@ export const adminSidebarUrl = [
   },
   { name: "Categories", href: "/dashboard/admin/categories", icon: Film },
   { name: "Transactions", href: "/dashboard/admin/transactions", icon: Ticket },
+  {
+    name: "Profile",
+    href: "/dashboard/admin/profile",
+    icon: User,
+  },
 ];
 
 export const creatorSidebarUrl = [
@@ -61,9 +67,19 @@ export const creatorSidebarUrl = [
     href: "/dashboard/provider/series/create",
     icon: Video,
   },
+  {
+    name: "Profile",
+    href: "/dashboard/provider/profile",
+    icon: User,
+  },
 ];
 
 export const userUrl = [
   { name: "Overview user", href: "/dashboard/user", icon: LayoutDashboard },
   { name: "Libary", href: "/dashboard/user/library", icon: Library },
+  {
+    name: "Profile",
+    href: "/dashboard/user/profile",
+    icon: User,
+  },
 ];

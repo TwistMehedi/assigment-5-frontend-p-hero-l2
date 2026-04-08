@@ -9,6 +9,8 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
+  EyeOff,
+  Eye,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -20,6 +22,8 @@ const ResetPassword = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [resetPassword, { isLoading }] = useResetPasswordMutation();
+
+  const [showCurrent, setShowCurrent] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -55,7 +59,6 @@ const ResetPassword = () => {
     }
 
     try {
-      // Backend mapping: password -> newPassword (jodi mutation-e age na kore thaken)
       const result = await resetPassword(validation.data).unwrap();
       toast.success(result?.message || "Password reset successful!");
 
@@ -116,7 +119,6 @@ const ResetPassword = () => {
             )}
           </div>
 
-          {/* OTP Input */}
           <div className="space-y-1.5">
             <label className="text-[10px] uppercase font-bold tracking-widest text-[var(--muted-foreground)] ml-1">
               OTP Code
@@ -157,7 +159,7 @@ const ResetPassword = () => {
                 size={16}
               />
               <input
-                type="password"
+                type={showCurrent ? "text" : "password"}
                 name="password"
                 placeholder="••••••••"
                 value={formData.password}
@@ -168,6 +170,13 @@ const ResetPassword = () => {
                     : "border-[var(--border)] focus:ring-[var(--primary)]"
                 }`}
               />
+              <button
+                type="button"
+                onClick={() => setShowCurrent(!showCurrent)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition"
+              >
+                {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
             {errors.password && (
               <p className="text-[10px] text-red-500 flex items-center gap-1 ml-1 font-medium animate-in fade-in slide-in-from-top-1">
@@ -191,7 +200,6 @@ const ResetPassword = () => {
           </motion.button>
         </form>
 
-        {/* Centered Try Again Link */}
         <div className="mt-8 text-center">
           <p className="text-[10px] uppercase font-bold tracking-widest text-[var(--muted-foreground)]">
             Didn't receive the password forgot OTP?{" "}

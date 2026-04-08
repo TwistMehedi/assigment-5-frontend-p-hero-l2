@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,18 +11,23 @@ import {
   Loader2,
   AlertCircle,
   ArrowRight,
+  EyeOff,
+  Eye,
 } from "lucide-react";
 import { loginSchema } from "@/types/zod/auth/zod.login";
 import { useLoginUserMutation } from "@/redux/api/auth.api";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/features/auth.slice";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const [showCurrent, setShowCurrent] = useState(false);
 
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const dispatch = useDispatch();
@@ -74,6 +79,21 @@ export default function LoginPage() {
       if (error.data?.message) {
         toast.error(error.data?.message);
       }
+    }
+  };
+
+  const handleGoogle = async () => {
+    try {
+      console.log("Initiating Google Login...");
+      const data = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: process.env.NEXT_PUBLIC_CLIENT_URL,
+      });
+      if (data?.error) {
+        console.error("Login Error:", data.error);
+      }
+    } catch (error) {
+      console.error("Something went wrong:", error);
     }
   };
 
@@ -152,12 +172,20 @@ export default function LoginPage() {
                 size={18}
               />
               <input
-                type="password"
+                type={showCurrent ? "text" : "password"}
                 name="password"
                 className={`w-full bg-[var(--muted)] border ${errors.password ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all font-medium`}
                 placeholder="••••••••"
                 onChange={handleChange}
               />
+
+              <button
+                type="button"
+                onClick={() => setShowCurrent(!showCurrent)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition"
+              >
+                {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
             <AnimatePresence>
               {errors.password && (
@@ -221,8 +249,8 @@ export default function LoginPage() {
             whileHover={{ scale: 1.01, backgroundColor: "var(--muted)" }}
             whileTap={{ scale: 0.98 }}
             type="button"
-            onClick={() => console.log("Google Login Clicked")}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-transparent py-3 text-sm font-bold text-[var(--foreground)] transition-all hover:shadow-md"
+            onClick={handleGoogle}
+            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-transparent py-3 text-sm font-bold text-[var(--foreground)] transition-all hover:shadow-md"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
