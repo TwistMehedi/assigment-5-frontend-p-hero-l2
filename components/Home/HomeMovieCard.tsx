@@ -16,6 +16,7 @@ import { IMovieResponse } from "@/types/interface/movie.interface";
 import { useCheckPurchaseQuery } from "@/redux/api/payment.api";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import WatchList from "../shared/WatchList";
 
 const HomeMovieCard = ({
   id,
@@ -31,8 +32,11 @@ const HomeMovieCard = ({
 }: IMovieResponse) => {
   const router = useRouter();
 
-  const { data: checkResponse, isLoading: isCheckLoading } =
-    useCheckPurchaseQuery(id);
+  const {
+    data: checkResponse,
+    isLoading: isCheckLoading,
+    refetch,
+  } = useCheckPurchaseQuery(id);
 
   const isPurchased = useMemo(() => {
     if (!checkResponse?.data) return false;
@@ -115,7 +119,7 @@ const HomeMovieCard = ({
           <Button
             onClick={handleMovieAction}
             disabled={isCheckLoading}
-            className={`w-full h-12 rounded-xl font-black uppercase tracking-wider gap-3 transition-all ${
+            className={`w-full cursor-pointer h-12 rounded-xl font-black uppercase tracking-wider gap-3 transition-all ${
               isPurchased || !isPremium
                 ? "bg-green-600 hover:bg-green-700 text-white"
                 : "bg-primary text-black hover:bg-primary/90"
@@ -133,6 +137,10 @@ const HomeMovieCard = ({
               </>
             )}
           </Button>
+
+          {(isPurchased || !isPremium) && (
+            <WatchList itemId={id} type="MOVIE" refetch={refetch} />
+          )}
 
           <Link
             href={`/movies/${id}`}

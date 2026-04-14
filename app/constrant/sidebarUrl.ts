@@ -12,6 +12,7 @@ import {
   Radio,
   Library,
   User,
+  WatchIcon,
 } from "lucide-react";
 
 export const adminSidebarUrl = [
@@ -77,6 +78,7 @@ export const creatorSidebarUrl = [
 export const userUrl = [
   { name: "Overview user", href: "/dashboard/user", icon: LayoutDashboard },
   { name: "Libary", href: "/dashboard/user/library", icon: Library },
+  { name: "Watch List", href: "/dashboard/user/watch-list", icon: WatchIcon },
   {
     name: "Profile",
     href: "/dashboard/user/profile",

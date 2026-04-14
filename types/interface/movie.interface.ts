@@ -11,7 +11,7 @@ export interface IChannel {
   name: string;
   location: string;
   description: string;
-  image: string;
+  image?: string;
   totalMovie?: string;
   totalSeries?: string;
   slug?: string;

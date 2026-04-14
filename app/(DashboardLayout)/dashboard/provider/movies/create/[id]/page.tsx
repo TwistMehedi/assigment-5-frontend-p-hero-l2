@@ -83,10 +83,8 @@ const MovieDetails = () => {
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Left Column: Video & Images */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Video Player Section */}
-          <div className="relative aspect-video rounded-3xl overflow-hidden border border-[var(--border)] bg-black shadow-2xl group">
+         <div className="lg:col-span-2 space-y-6">
+           <div className="relative aspect-video rounded-3xl overflow-hidden border border-[var(--border)] bg-black shadow-2xl group">
              <video 
                src={movie.videoUrl} 
                controls 
@@ -95,8 +93,7 @@ const MovieDetails = () => {
              />
           </div>
 
-          {/* Description */}
-          <div className="bg-[var(--card)] p-6 md:p-8 rounded-3xl border border-[var(--border)]">
+           <div className="bg-[var(--card)] p-6 md:p-8 rounded-3xl border border-[var(--border)]">
             <h3 className="text-lg font-black uppercase mb-4 flex items-center gap-2">
               <AlignLeftIcon size={18} className="text-[var(--primary)]" /> Storyline
             </h3>
@@ -106,10 +103,8 @@ const MovieDetails = () => {
           </div>
         </div>
 
-        {/* Right Column: Details & Poster */}
-        <div className="space-y-6">
-          {/* Poster Image */}
-          <div className="bg-[var(--card)] p-3 rounded-3xl border border-[var(--border)] overflow-hidden">
+         <div className="space-y-6">
+           <div className="bg-[var(--card)] p-3 rounded-3xl border border-[var(--border)] overflow-hidden">
             <img 
               src={movie.posterUrl} 
               alt={movie.title} 
@@ -117,8 +112,7 @@ const MovieDetails = () => {
             />
           </div>
 
-          {/* Metadata List */}
-          <div className="bg-[var(--card)] p-6 rounded-3xl border border-[var(--border)] space-y-5">
+           <div className="bg-[var(--card)] p-6 rounded-3xl border border-[var(--border)] space-y-5">
             <DetailItem icon={<Clapperboard size={16}/>} label="Director" value={movie.director} />
             <DetailItem icon={<Calendar size={16}/>} label="Release Date" value={new Date(movie.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} />
             
@@ -127,7 +121,7 @@ const MovieDetails = () => {
                 <Users size={14} /> Leading Cast
               </p>
               <div className="flex flex-wrap gap-2">
-                {movie.cast.map((actor, index) => (
+                {movie.cast.map((actor: any, index: any) => (
                   <span key={index} className="bg-[var(--muted)] text-[var(--foreground)] px-3 py-1.5 rounded-lg text-[11px] font-bold border border-[var(--border)]">
                     {actor}
                   </span>

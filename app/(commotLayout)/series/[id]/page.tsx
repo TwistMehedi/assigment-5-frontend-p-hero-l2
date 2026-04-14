@@ -17,6 +17,7 @@ import { useSeriesQuery } from "@/redux/api/series.api";
 import { useParams, useRouter } from "next/navigation";
 import { useCheckPurchaseQuery } from "@/redux/api/payment.api";
 import ReviewSection from "@/components/ReviewSection";
+import WatchList from "@/components/shared/WatchList";
 
 const SeriesDetails = () => {
   const { id } = useParams();
@@ -30,8 +31,6 @@ const SeriesDetails = () => {
     refetch,
   } = useSeriesQuery<any>(id);
   const series = response?.data;
-
-  console.log(series);
 
   const { data: checkResponse, isLoading: isCheckLoading } =
     useCheckPurchaseQuery(id as string, {
@@ -220,6 +219,14 @@ const SeriesDetails = () => {
                     </>
                   )}
                 </Button>
+
+                {(isPurchased || !series?.isPremium) && (
+                  <WatchList
+                    itemId={id as string}
+                    type="SERIES"
+                    refetch={refetch}
+                  />
+                )}
 
                 <div className="space-y-4 pt-6 border-t border-border">
                   <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-[0.2em]">

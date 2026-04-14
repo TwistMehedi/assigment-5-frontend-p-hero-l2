@@ -4,7 +4,7 @@ export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({
     baseUrl:
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/dashboard` ||
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/dashboard` ||
       "http://localhost:5000/api/v1/user/dashboard/",
     credentials: "include",
   }),
@@ -92,7 +92,25 @@ export const userApi = createApi({
       invalidatesTags: ["User"],
     }),
 
-    
+    watchList: builder.mutation({
+      query: (data) => ({
+        url: "watch-letter",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    watchListsHubs: builder.query({
+      query: () => ({
+        url: "watch-letter-hubs",
+        method: "GET",
+      }),
+    }),
+    deleteWatch: builder.mutation({
+      query: (id) => ({
+        url: `delete-watch-hub?id=${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -106,5 +124,8 @@ export const {
   useMyPurchasedAllQuery,
   useUsersQuery,
   useUpdateRoleMutation,
-  useDeleteUserMutation
+  useDeleteUserMutation,
+  useWatchListMutation,
+  useWatchListsHubsQuery,
+  useDeleteWatchMutation,
 } = userApi;

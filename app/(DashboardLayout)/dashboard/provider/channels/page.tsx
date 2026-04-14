@@ -88,13 +88,15 @@ export default function MyChannelsPage() {
           <p className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase">
             Total Channels
           </p>
-          <p className="text-xl font-black text-white">{channels?.length}</p>
+          <p className="text-xl font-black text-white">
+            {(channels as any)?.data?.length}
+          </p>
         </div>
       </div>
 
-      {channels.length > 0 ? (
+      {(channels as any)?.data?.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {channels.map((channel: IChannel) => (
+          {(channels as any)?.data?.map((channel: IChannel) => (
             <div
               key={channel.id}
               className="group relative bg-[var(--card)] border border-[var(--border)] rounded-3xl overflow-hidden hover:border-[var(--primary)]/50 transition-all duration-300"

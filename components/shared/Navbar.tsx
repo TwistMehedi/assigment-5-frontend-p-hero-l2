@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../Navbar/ModeToggle";
 import { useSelector } from "react-redux";
+import LogoutBtn from "./LogoutBtn";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,12 +57,16 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center gap-4">
             {user ? (
-              <Link
-                href="/dashboard"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                Dashboard
-              </Link>
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
+                  Dashboard
+                </Link>
+
+                <LogoutBtn />
+              </>
             ) : (
               <>
                 <Link
@@ -100,56 +105,65 @@ const Navbar = () => {
         </div>
       </div>
 
-      {isOpen && (
-        <div className="md:hidden border-t border-white/10 bg-background px-4 py-6 space-y-4 animate-in slide-in-from-top-5 duration-300">
-          <div className="space-y-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="block text-lg font-medium text-muted-foreground hover:text-primary px-2 py-2 rounded-md hover:bg-secondary/50"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
+ {isOpen && (
+  <div className="md:hidden border-t border-white/10 bg-background px-4 py-6 space-y-4 animate-in slide-in-from-top-5 duration-300">
+    <div className="space-y-2">
+      {navLinks.map((link) => (
+        <Link
+          key={link.name}
+          href={link.href}
+          onClick={() => setIsOpen(false)}
+          className="block text-lg font-medium text-muted-foreground hover:text-primary px-2 py-2 rounded-md hover:bg-secondary/50"
+        >
+          {link.name}
+        </Link>
+      ))}
+    </div>
 
-          <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
-            {user ? (
-              <Link
-                href="/dashboard"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                Dashboard
-              </Link>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Login
-                </Link>
-
-                <Link
-                  href="/register"
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Register
-                </Link>
-              </>
-            )}
-
-            <Button
-              className="w-full bg-primary cursor-pointer"
-              onClick={() => setIsOpen(false)}
-            >
-              Get Started
-            </Button>
+     <div className="flex flex-col gap-4 pt-4 border-t border-white/5">
+      {user ? (
+        <div className="flex flex-col gap-4">
+          <Link
+            href="/dashboard"
+            onClick={() => setIsOpen(false)}
+            className="text-lg font-medium text-muted-foreground hover:text-primary px-2"
+          >
+            Dashboard
+          </Link>
+          
+          <div className="px-2">
+             <LogoutBtn />
           </div>
         </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          <Link
+            href="/login"
+            onClick={() => setIsOpen(false)}
+            className="text-lg font-medium text-muted-foreground hover:text-primary px-2"
+          >
+            Login
+          </Link>
+
+          <Link
+            href="/register"
+            onClick={() => setIsOpen(false)}
+            className="text-lg font-medium text-muted-foreground hover:text-primary px-2"
+          >
+            Register
+          </Link>
+        </div>
       )}
+
+      <Button
+        className="w-full bg-primary"
+        onClick={() => setIsOpen(false)}
+      >
+        Get Started
+      </Button>
+    </div>
+  </div>
+)}
     </nav>
   );
 };

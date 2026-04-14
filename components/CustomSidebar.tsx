@@ -34,7 +34,13 @@ export default function CustomSidebar() {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
 
-  const user = useSelector((state: any) => state?.auth?.user) || null;
+  const user = useSelector((state: any) => state?.auth?.user);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || !user) return null;
 
   const sidebarItems =
     user?.role === "ADMIN"
@@ -42,12 +48,6 @@ export default function CustomSidebar() {
       : user?.role === "CREATOR"
         ? creatorSidebarUrl
         : userUrl;
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
 
   return (
     <Sidebar

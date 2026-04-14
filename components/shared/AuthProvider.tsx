@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/app/loading";
 import { authClient } from "@/lib/auth-client";
 import { useSocialLoginMutation } from "@/redux/api/auth.api";
 import { setCredentials } from "@/redux/features/auth.slice";
@@ -8,57 +9,62 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: session, isPending } = authClient.useSession();
-
+  // const { data: session, isPending } = authClient.useSession();
   const [isMounted, setIsMounted] = useState(false);
+  // const [hasInitialLoaded, setHasInitialLoaded] = useState(false);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  // const [socialLogin] = useSocialLoginMutation();
 
-  const [socialLogin] = useSocialLoginMutation();
-
-  const backendToken = useSelector(
-    (state: RootState) => state.auth.cookies?.sessionToken,
-  );
+  // const user = useSelector((state: RootState) => state.auth.user);
+  // const backendToken = useSelector(
+  //   (state: RootState) => state.auth.cookies?.sessionToken,
+  // );
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (isPending || !isMounted || !session?.user) return;
+  // useEffect(() => {
+  if (!isMounted) return;
 
-    if (backendToken) {
-      dispatch(
-        setCredentials({
-          user: { ...session.user } as any,
-          cookies: { sessionToken: session?.session?.token },
-        }),
-      );
-      return;
-    }
+  // if (!isPending) {
+  //   setHasInitialLoaded(true);
+  // }
 
-    const syncBackend = async () => {
-      try {
-        const result = await socialLogin(session).unwrap();
-        dispatch(
-          setCredentials({
-            user: result?.data?.user,
-            cookies: {
-              token: result?.cookies?.token,
-              refreshToken: result?.cookies?.refreshToken,
-              sessionToken: result?.cookies?.sessionToken,
-            },
-          }),
-        );
-      } catch (err) {
-        console.error("Backend Sync Failed:", err);
-      }
-    };
+  // if (session?.user && (!user || !backendToken)) {
+  //   const syncBackend = async () => {
+  //     try {
+  //       const result = await socialLogin(session).unwrap();
+  //       dispatch(
+  //         setCredentials({
+  //           user: result?.data?.user,
+  //           cookies: {
+  //             token: result?.cookies?.token,
+  //             refreshToken: result?.cookies?.refreshToken,
+  //             sessionToken: result?.cookies?.sessionToken,
+  //           },
+  //         }),
+  //       );
+  //     } catch (err) {
+  //       console.error("Backend sync failed:", err);
+  //     }
+  //   };
+  //   syncBackend();
+  // }
+  // }, [
+  // session,
+  // isPending,
+  // isMounted,
+  // backendToken,
+  // user,
+  // dispatch,
+  // socialLogin,
+  // ]);
 
-    syncBackend();
-  }, [session, isPending, isMounted, backendToken, dispatch, socialLogin]);
-
-  if (!isMounted) return null;
+  // if (!isMounted || (!hasInitialLoaded && isPending)) {
+  //   return <Loading />;
+  // }
 
   return <>{children}</>;
 };

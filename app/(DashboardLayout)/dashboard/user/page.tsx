@@ -10,7 +10,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { useGetSharedUserQuery } from "@/redux/api/user.api";
-import Profile from "@/components/User/Profile";
 
 const UserDashboard = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -59,7 +58,6 @@ const UserDashboard = () => {
           icon={<CreditCard className="text-green-500" />}
         />
       </div>
-      <Profile />
     </div>
   );
 };

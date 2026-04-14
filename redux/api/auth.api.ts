@@ -4,11 +4,12 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl:
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/` ||
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/` ||
       "http://localhost:5000/api/v1/auth/",
     credentials: "include",
   }),
   tagTypes: ["Auth"],
+
   endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (registerData) => ({

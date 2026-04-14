@@ -4,7 +4,7 @@ export const paymentApi = createApi({
   reducerPath: "paymentApi",
   baseQuery: fetchBaseQuery({
     baseUrl:
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/payment/` ||
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/payment/` ||
       "http://localhost:5000/api/v1/payment/",
     credentials: "include",
   }),

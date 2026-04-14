@@ -7,13 +7,17 @@ import { Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
   const user = useSelector((state: any) => state?.auth?.user);
+  const isRehydrated = useSelector((state: any) => state?._persist?.rehydrated);
   const router = useRouter();
 
+  console.log("user after", user);
   React.useEffect(() => {
-    if (user) {
-      if (user.role === "ADMIN") {
+    if (!isRehydrated) return;
+
+    if (user && user.role) {
+      if (user?.role === "ADMIN") {
         router.replace("/dashboard/admin");
-      } else if (user.role === "CREATOR") {
+      } else if (user?.role === "CREATOR") {
         router.replace("/dashboard/provider");
       } else {
         router.replace("/dashboard/user");
@@ -21,11 +25,17 @@ export default function DashboardPage() {
     } else {
       router.replace("/login");
     }
-  }, [user, router]);
+  }, [user, isRehydrated, router]);
 
+  console.log("user before useEffect", user);
   return (
-    <div className="h-screen flex items-center justify-center">
-      <Loader2 className="animate-spin text-[var(--primary)]" size={40} />
+    <div className="h-screen flex items-center justify-center bg-[var(--background)]">
+      <div className="flex flex-col items-center gap-4">
+        <Loader2 className="animate-spin text-[var(--primary)]" size={40} />
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
+          Syncing Session...
+        </p>
+      </div>
     </div>
   );
 }

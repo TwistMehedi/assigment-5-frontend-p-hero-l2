@@ -51,7 +51,7 @@ export default function CreateChannelModal({
         location: initialData.location,
         description: initialData.description || "",
       });
-      setPreview(initialData.image);
+      setPreview(initialData?.image || null);
     } else {
       setFormData({ name: "", location: "", description: "" });
       setPreview(null);

@@ -9,7 +9,7 @@ export const seriesApi = createApi({
   reducerPath: "seriesApi",
   baseQuery: fetchBaseQuery({
     baseUrl:
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/series/` ||
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/series/` ||
       "http://localhost:5000/api/v1/series/",
     credentials: "include",
   }),

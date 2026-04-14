@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useSelector } from "react-redux";
+import Loading from "@/app/loading";
 
 export default function DashboardLayout({
   children,
@@ -23,7 +24,9 @@ export default function DashboardLayout({
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted || !user) {
+    return <Loading />;
+  }
 
   return (
     <SidebarProvider>
