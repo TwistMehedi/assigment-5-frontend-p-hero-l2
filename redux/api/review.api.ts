@@ -28,7 +28,34 @@ export const reviewApi = createApi({
       }),
       providesTags: ["Review"],
     }),
+    allUserReviews: builder.query({
+      query: () => ({
+        url: "admin/all-reviews",
+        method: "GET",
+      }),
+    }),
+    updateReviewStatus: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `review-update-status?id=${id}`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: ["Review"],
+    }),
+    myReviews: builder.query({
+      query: () => ({
+        url: "my-reviews",
+        method: "GET",
+      }),
+      providesTags: ["Review"],
+    }),
   }),
 });
 
-export const { useCreateReviewMutation, useGetReviewsQuery } = reviewApi;
+export const {
+  useCreateReviewMutation,
+  useGetReviewsQuery,
+  useAllUserReviewsQuery,
+  useUpdateReviewStatusMutation,
+  useMyReviewsQuery,
+} = reviewApi;

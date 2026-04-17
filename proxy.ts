@@ -1,18 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const sessionToken =
-    req.cookies.get("__Secure-better-auth.session_token")?.value ||
-    req.cookies.get("better-auth.session_token")?.value;
+  // const sessionToken =
+  //   req.cookies.get("__Secure-better-auth.session_token")?.value ||
+  //   req.cookies.get("better-auth.session_token")?.value;
+
+  const sessionToken = getSessionCookie(req);
 
   let userRole = null;
 
   if (sessionToken) {
     try {
+      // const response = await fetch(
+      //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/get-session`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${sessionToken}`,
+      //       "Content-Type": "application/json",
+      //     },
+      //     cache: "no-store",
+      //   },
+      // );
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/get-session`,
+        new URL("/api/auth/get-session", process.env.NEXT_PUBLIC_BACKEND_URL),
         {
           headers: {
             Authorization: `Bearer ${sessionToken}`,

@@ -13,6 +13,7 @@ import {
   Library,
   User,
   WatchIcon,
+  ViewIcon,
 } from "lucide-react";
 
 export const adminSidebarUrl = [
@@ -30,6 +31,7 @@ export const adminSidebarUrl = [
   },
   { name: "Categories", href: "/dashboard/admin/categories", icon: Film },
   { name: "Transactions", href: "/dashboard/admin/transactions", icon: Ticket },
+  { name: "Reviews", href: "/dashboard/admin/comments", icon: ViewIcon },
   {
     name: "Profile",
     href: "/dashboard/admin/profile",
@@ -79,6 +81,7 @@ export const userUrl = [
   { name: "Overview user", href: "/dashboard/user", icon: LayoutDashboard },
   { name: "Libary", href: "/dashboard/user/library", icon: Library },
   { name: "Watch List", href: "/dashboard/user/watch-list", icon: WatchIcon },
+  { name: "My Comments", href: "/dashboard/user/comments", icon: ViewIcon },
   {
     name: "Profile",
     href: "/dashboard/user/profile",

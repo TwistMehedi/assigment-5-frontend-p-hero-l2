@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { MessageSquare, Star, Send, Loader2, ChevronDown } from "lucide-react";
+import {
+  MessageSquare,
+  Star,
+  Send,
+  Loader2,
+  ChevronDown,
+  Check,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RatingSystem from "@/components/movie/RatingSystem";
 import { format } from "date-fns";
@@ -20,6 +27,8 @@ interface ReviewSectionProps {
 const ReviewSection = ({ itemId, type, refetch }: ReviewSectionProps) => {
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [activeTag, setActiveTag] = useState<string | null>(null);
 
   const [visibleCount, setVisibleCount] = useState(5);
 
@@ -30,6 +39,22 @@ const ReviewSection = ({ itemId, type, refetch }: ReviewSectionProps) => {
 
   const [createReview, { isLoading: isSubmitting }] = useCreateReviewMutation();
 
+  const TAG_OPTIONS = [
+    "spoiler",
+    "family-friendly",
+    "classic",
+    "18+",
+    "underrated",
+    "must-watch",
+    "boring",
+  ];
+
+  const handleTagToggle = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+    );
+  };
+
   const handleSubmit = async () => {
     if (rating === 0) return toast.error("Please select a rating!");
     if (!content.trim()) return toast.error("Please write something!");
@@ -38,6 +63,7 @@ const ReviewSection = ({ itemId, type, refetch }: ReviewSectionProps) => {
       const payload: any = {
         rating,
         content,
+        tags: selectedTags,
         [type === "MOVIE" ? "mediaId" : "seriesId"]: itemId,
       };
 
@@ -45,6 +71,7 @@ const ReviewSection = ({ itemId, type, refetch }: ReviewSectionProps) => {
       toast.success("Review submitted!");
       setContent("");
       setRating(0);
+      setSelectedTags([]);
       setVisibleCount(5);
       refetch();
     } catch (error: any) {
@@ -52,9 +79,18 @@ const ReviewSection = ({ itemId, type, refetch }: ReviewSectionProps) => {
     }
   };
 
-  const allReviews = reviewsRes?.data || [];
-  const displayedReviews = allReviews.slice(0, visibleCount);
-  const hasMore = allReviews.length > visibleCount;
+  // const allReviews = reviewsRes?.data || [];
+
+  const allReviews =
+    reviewsRes?.data?.filter((review: any) => review.status === "APPROVED") ||
+    [];
+
+  const filteredReviews = activeTag
+    ? allReviews.filter((review: any) => review.tags?.includes(activeTag))
+    : allReviews;
+
+  const displayedReviews = filteredReviews.slice(0, visibleCount);
+  const hasMore = filteredReviews.length > visibleCount;
 
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + 5);
@@ -81,6 +117,30 @@ const ReviewSection = ({ itemId, type, refetch }: ReviewSectionProps) => {
           placeholder="Share your thoughts..."
         />
 
+        <div className="space-y-2">
+          <p className="text-xs font-bold uppercase text-muted-foreground">
+            Select Tags
+          </p>
+
+          <div className="flex flex-wrap gap-2">
+            {TAG_OPTIONS.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => handleTagToggle(tag)}
+                className={`px-3 py-1 rounded-full text-xs font-bold border transition 
+          ${
+            selectedTags.includes(tag)
+              ? "bg-primary text-black border-primary"
+              : "bg-background text-muted-foreground border-border hover:border-primary"
+          }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <Button
           onClick={handleSubmit}
           disabled={isSubmitting}
@@ -95,9 +155,36 @@ const ReviewSection = ({ itemId, type, refetch }: ReviewSectionProps) => {
         </Button>
       </div>
 
+      <div className="flex flex-wrap gap-2 mt-4">
+        <button
+          onClick={() => setActiveTag(null)}
+          className={`px-3 py-1 text-xs rounded-full border font-bold ${
+            activeTag === null
+              ? "bg-primary text-black"
+              : "border-border text-muted-foreground"
+          }`}
+        >
+          All
+        </button>
+
+        {TAG_OPTIONS.map((tag) => (
+          <button
+            key={tag}
+            onClick={() => setActiveTag(tag)}
+            className={`px-3 py-1 text-xs rounded-full border font-bold ${
+              activeTag === tag
+                ? "bg-primary text-black"
+                : "border-border text-muted-foreground"
+            }`}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+
       <div className="space-y-6">
         <h3 className="text-xl font-black uppercase italic border-l-4 border-primary pl-4">
-          User Reviews ({allReviews.length})
+          User Reviews ({filteredReviews.length})
         </h3>
 
         {isReviewsLoading ? (
@@ -126,14 +213,37 @@ const ReviewSection = ({ itemId, type, refetch }: ReviewSectionProps) => {
                         {format(new Date(review.createdAt), "dd MMM yyyy")}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded text-[10px] font-bold">
-                      <Star size={10} className="fill-current" />{" "}
-                      {review.rating}.0
+
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded text-[10px] font-bold">
+                        <Star size={10} className="fill-current" />
+                        {review.rating}.0
+                      </div>
+
+                      {review.status === "APPROVED" && (
+                        <div className="flex items-center gap-1 text-green-500 text-[10px] font-bold">
+                          <Check size={10} />
+                          Approved
+                        </div>
+                      )}
                     </div>
                   </div>
+
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {review.content}
                   </p>
+                  {review.tags && review.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {review.tags.map((tag: string) => (
+                        <span
+                          key={tag}
+                          className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
