@@ -1,12 +1,8 @@
 "use client";
-
-import React from "react";
 import { motion } from "framer-motion";
-import { Search, Play, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
+ 
 const Hero = () => {
+    
   return (
     <section className="relative h-[85vh] w-full overflow-hidden flex items-center justify-center transition-colors duration-500">
       <div

@@ -10,7 +10,7 @@ export default function DashboardPage() {
   const isRehydrated = useSelector((state: any) => state?._persist?.rehydrated);
   const router = useRouter();
 
-  console.log("user after", user);
+  console.log("Client Side User Data:", user);
   React.useEffect(() => {
     if (!isRehydrated) return;
 

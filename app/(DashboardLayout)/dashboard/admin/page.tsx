@@ -18,6 +18,8 @@ export default function AdminOverview() {
   const { data: response, isLoading } = useGetAdminDashboardQuery(undefined);
   const adminData = response?.data;
 
+  console.log("Client Side Admin Data:", adminData);
+
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">

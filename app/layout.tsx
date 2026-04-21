@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@/components/Navbar/theme-provider";
 import ReduxProvider from "@/components/ReduxProvider";
-import { AuthProvider } from "@/components/shared/AuthProvider";
+// import { AuthProvider } from "@/components/shared/AuthProvider";
 import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 
@@ -9,11 +9,7 @@ const inter = Inter({
   display: "swap",
 });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -26,7 +22,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ReduxProvider>
-            <AuthProvider>{children}</AuthProvider>
+            {/* <AuthProvider>{children}</AuthProvider> */}
+            {children}
             <ToastContainer
               theme="dark"
               position="top-center"
@@ -38,3 +35,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+export default RootLayout;

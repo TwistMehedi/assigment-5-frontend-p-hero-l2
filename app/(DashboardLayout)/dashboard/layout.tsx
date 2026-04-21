@@ -11,12 +11,9 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useSelector } from "react-redux";
 import Loading from "@/app/loading";
+import { withAdmin } from "@/components/shared/WithAdmin";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = React.useState(false);
   const user = useSelector((state: any) => state?.auth.user) || null;
 
@@ -66,3 +63,6 @@ export default function DashboardLayout({
     </SidebarProvider>
   );
 }
+
+export default withAdmin(DashboardLayout);
+// export default DashboardLayout;

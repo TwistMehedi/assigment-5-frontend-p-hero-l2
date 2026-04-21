@@ -1,48 +1,34 @@
 "use client";
 
-import Loading from "@/app/loading";
-import { authClient } from "@/lib/auth-client";
-import { useSocialLoginMutation } from "@/redux/api/auth.api";
+import { authClient, Session } from "@/lib/auth-client";
+// import { useSocialLoginMutation } from "@/redux/api/auth.api";
 import { setCredentials } from "@/redux/features/auth.slice";
 import { RootState } from "@/redux/store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: session, isPending } = authClient.useSession();
-  const [isMounted, setIsMounted] = useState(false);
-  const [hasInitialLoaded, setHasInitialLoaded] = useState(false);
-
   const dispatch = useDispatch();
-  const [socialLogin] = useSocialLoginMutation();
+  // const [socialLogin] = useSocialLoginMutation();
 
-  const user = useSelector((state: RootState) => state.auth.user);
-  const backendToken = useSelector(
-    (state: RootState) => state.auth.cookies?.sessionToken,
-  );
+  const { data, isPending } = authClient.useSession();
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const session = data as Session | null;
+  console.log("AuthProvider session:", session);
+  const userId = useSelector((state: any) => state?.auth?.user?.id);
 
   useEffect(() => {
-    if (!isMounted) return;
-
-    if (!isPending) {
-      setHasInitialLoaded(true);
-    }
-
-    if (session?.user && (!user || !backendToken)) {
+    if (session?.user && !isPending && session?.user?.id !== userId) {
       const syncBackend = async () => {
         try {
-          const result = await socialLogin(session).unwrap();
+          // const result = await socialLogin(session).unwrap();
           dispatch(
             setCredentials({
-              user: result?.data?.user,
+              user: session?.user,
               cookies: {
-                token: result?.cookies?.token,
-                refreshToken: result?.cookies?.refreshToken,
-                sessionToken: result?.cookies?.sessionToken,
+                // token: result?.cookies?.token,
+                // refreshToken: result?.cookies?.refreshToken,
+                sessionToken: session?.session.token,
               },
             }),
           );
@@ -52,19 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       };
       syncBackend();
     }
-  }, [
-    session,
-    isPending,
-    isMounted,
-    backendToken,
-    user,
-    dispatch,
-    socialLogin,
-  ]);
-
-  if (!isMounted || (!hasInitialLoaded && isPending)) {
-    return <Loading />;
-  }
+  }, [session, isPending, dispatch, userId]);
 
   return <>{children}</>;
 };

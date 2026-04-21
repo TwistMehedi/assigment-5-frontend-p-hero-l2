@@ -31,13 +31,18 @@ export async function proxy(req: NextRequest) {
           headers: {
             Authorization: `Bearer ${sessionToken}`,
             "Content-Type": "application/json",
+            Cookie: `better-auth.session_token=${sessionToken}; __Secure-better-auth.session_token=${sessionToken}`,
           },
           cache: "no-store",
         },
       );
 
+      // console.log("Fetching session from backend with token:", response);
+      // console.log("Response Headers:", response.headers);
+      // console.log("Response :", response);
       if (response.ok) {
         const result = await response.json();
+        // console.log("Full Result from Backend:", result);
         userRole = result?.user?.role || null;
       }
     } catch (error) {

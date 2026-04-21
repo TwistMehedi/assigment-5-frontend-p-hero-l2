@@ -63,6 +63,11 @@ export default function LoginPage() {
 
     try {
       const result = await loginUser(validation.data).unwrap();
+
+      await authClient.signIn.email({
+        email: formData.email,
+        password: formData.password,
+      });
       dispatch(
         setCredentials({
           user: result?.data?.user,
