@@ -56,7 +56,10 @@ const LogoutBtn = () => {
         {isLoading ? (
           <Loader2 className="animate-spin" size={16} />
         ) : (
-          <LogOut size={16} />
+          <>
+            <LogOut size={16} />
+            Sign Out
+          </>
         )}
       </button>
     </div>

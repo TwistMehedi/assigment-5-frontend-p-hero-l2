@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../Navbar/ModeToggle";
 import { useSelector } from "react-redux";
 import LogoutBtn from "./LogoutBtn";
+import AvatarDropdown from "../Navbar/DropdownMenuAvatar";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,31 +56,12 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            {/* <Link
-              href="/about"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Contact
-            </Link> */}
           </div>
 
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <Link
-                  href="/dashboard"
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Dashboard
-                </Link>
-
-                <LogoutBtn />
+                <AvatarDropdown />
               </>
             ) : (
               <>
