@@ -29,6 +29,7 @@ export default function MyChannelsPage() {
   const [deleteChannel, { isLoading: isDeleting }] = useDeleteChaneleMutation();
   const { data: channelsResult, isLoading, isError } = useChannelsQuery();
   const channels = channelsResult?.data || [];
+  console.log(channels)
 
   if (isLoading)
     return (
@@ -89,14 +90,14 @@ export default function MyChannelsPage() {
             Total Channels
           </p>
           <p className="text-xl font-black text-white">
-            {(channels as any)?.data?.length}
+            {(channels as any)?.length}
           </p>
         </div>
       </div>
 
-      {(channels as any)?.data?.length > 0 ? (
+      {(channels as any)?.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(channels as any)?.data?.map((channel: IChannel) => (
+          {(channels as any)?.map((channel: IChannel) => (
             <div
               key={channel.id}
               className="group relative bg-[var(--card)] border border-[var(--border)] rounded-3xl overflow-hidden hover:border-[var(--primary)]/50 transition-all duration-300"

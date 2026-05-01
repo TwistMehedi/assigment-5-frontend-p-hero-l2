@@ -57,16 +57,16 @@ const ChannelDetails = () => {
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-[3rem] overflow-hidden shadow-2xl">
         <div className="relative h-48 bg-[var(--muted)]">
           <img
-            src={channel?.data?.image}
+            src={channel?.image}
             className="w-full h-full object-cover blur-2xl opacity-20"
             alt=""
           />
 
           <div className="absolute -bottom-10 left-10">
             <img
-              src={channel?.data?.image}
+              src={channel?.image}
               className="w-32 h-32 rounded-[2rem] border-8 border-[var(--card)] object-cover shadow-xl"
-              alt={channel?.data.name}
+              alt={channel?.name}
             />
           </div>
         </div>
@@ -75,10 +75,10 @@ const ChannelDetails = () => {
           <div className="flex justify-between items-end">
             <div>
               <h1 className="text-4xl font-black uppercase tracking-tighter text-white">
-                {channel?.data.name}
+                {channel?.name}
               </h1>
               <p className="text-[var(--primary)] font-black uppercase text-[10px] mt-1 tracking-widest flex items-center gap-1">
-                <MapPin size={12} /> {channel?.data.location}
+                <MapPin size={12} /> {channel?.location}
               </p>
             </div>
           </div>
@@ -90,7 +90,7 @@ const ChannelDetails = () => {
                 Overview
               </h2>
               <p className="text-sm text-[var(--muted-foreground)] leading-relaxed bg-[var(--background)] p-6 rounded-2xl border border-[var(--border)]">
-                {channel?.data.description ||
+                {channel?.description ||
                   "No description provided for this channel."}
               </p>
             </div>
@@ -108,7 +108,7 @@ const ChannelDetails = () => {
                     </span>
                   </div>
                   <span className="text-xl font-black text-white">
-                    {channel?.data.totalMovie || 0}
+                    {channel?.totalMovie || 0}
                   </span>
                 </div>
 
@@ -120,7 +120,7 @@ const ChannelDetails = () => {
                     </span>
                   </div>
                   <span className="text-xl font-black text-white">
-                    {channel?.data.totalSeries || 0}
+                    {channel?.totalSeries || 0}
                   </span>
                 </div>
               </div>

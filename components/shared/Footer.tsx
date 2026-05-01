@@ -22,7 +22,7 @@ const Footer = () => {
               href="/"
               className="text-2xl font-black tracking-tighter text-primary"
             >
-              MOVIE
+              MOVIE-
               <span className="text-slate-900 dark:text-white">PORTAL</span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">

@@ -74,7 +74,7 @@ export const movieApi = createApi({
       invalidatesTags: ["Movie"],
     }),
 
-    getChannel: builder.query<IApiResponse<IChannel>, string>({
+    getChannel: builder.query({
       query: (id) => ({
         url: `channel/${id}`,
         method: "GET",

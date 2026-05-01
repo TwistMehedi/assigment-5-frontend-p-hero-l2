@@ -149,6 +149,7 @@ export default function UploadMoviePage() {
     try {
       const result = await uploadMovie(data).unwrap();
       toast.success(result.message || "Movie uploaded successfully!");
+      router.push("/dashboard/provider/movies");
       setFormData({
         title: "",
         description: "",
@@ -189,7 +190,6 @@ export default function UploadMoviePage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Title */}
             <div className="col-span-2 space-y-1">
               <label className="text-[10px] font-black uppercase text-[var(--foreground)] ml-1 tracking-widest">
                 Movie Title
@@ -210,7 +210,6 @@ export default function UploadMoviePage() {
               <ErrorMessage message={errors.title} />
             </div>
 
-            {/* Genre Select */}
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-[var(--foreground)] ml-1 tracking-widest">
                 Genre

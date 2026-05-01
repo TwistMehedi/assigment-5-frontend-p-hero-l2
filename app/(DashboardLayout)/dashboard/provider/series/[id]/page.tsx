@@ -219,9 +219,6 @@ const SingleSeries = () => {
                       <span className="hidden sm:block text-[10px] font-black uppercase bg-white/5 px-3 py-1 rounded-full opacity-40">
                         #S{season.seasonNumber}
                       </span>
-                      <button className="p-3 bg-white/5 hover:bg-[var(--primary)] hover:text-black rounded-full transition-all active:scale-90">
-                        <Play size={14} fill="currentColor" />
-                      </button>
                     </div>
                   </div>
                 ))

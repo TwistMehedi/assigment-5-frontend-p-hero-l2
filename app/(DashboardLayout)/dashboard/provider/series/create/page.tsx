@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useCreateSeriesMutation } from "@/redux/api/series.api";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   PlusCircle,
   Image as ImageIcon,
@@ -14,15 +14,29 @@ import {
   Calendar,
   Loader2,
   Undo2,
+  Layers,
+  ChevronDown,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { seriesSchema } from "@/types/zod/series/series.schema";
 import { ZodError } from "zod";
+import { useCategoriesQuery } from "@/redux/api/movieApi";
+import { ICategory } from "@/types/interface/movie.interface";
 
 const CreateSeries = () => {
   const router = useRouter();
   const [createSeries, { isLoading }] = useCreateSeriesMutation();
+
+  const { data: categoriesRes, isLoading: isCategoriesLoading } =
+    useCategoriesQuery(undefined);
+
+  const categoryOptions = useMemo(() => {
+    const categoriesData =
+      categoriesRes?.data?.data || categoriesRes?.data || [];
+    return categoriesData.map((c: ICategory) => c.name);
+  }, [categoriesRes]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -102,6 +116,21 @@ const CreateSeries = () => {
     }
   };
 
+  const ErrorMessage = ({ message }: { message?: string }) => (
+    <AnimatePresence>
+      {message && (
+        <motion.p
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="text-[10px] text-red-500 font-bold flex items-center gap-1 mt-1 overflow-hidden ml-1"
+        >
+          <AlertCircle size={12} /> {message}
+        </motion.p>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <div className="min-h-screen bg-[var(--background)] p-4 md:p-10 flex justify-center">
       <motion.div
@@ -162,19 +191,40 @@ const CreateSeries = () => {
             )}
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase flex items-center gap-2 px-1 text-[var(--muted-foreground)]">
-              <Tag size={16} /> Genre
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase text-[var(--foreground)] ml-1 tracking-widest">
+              Genre
             </label>
-            <input
-              name="genre"
-              placeholder="Drama, Thriller"
-              onChange={handleChange}
-              className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-2xl py-4 px-5 text-sm outline-none focus:ring-2 focus:ring-[var(--primary)]"
-            />
-            {errors.genre && (
-              <p className="text-red-500 text-xs mt-1 ml-1">{errors.genre}</p>
-            )}
+            <div className="relative">
+              <Layers
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] z-10"
+                size={18}
+              />
+              <select
+                name="genre"
+                value={formData.genre}
+                onChange={handleChange}
+                className={`w-full bg-[var(--muted)] border ${errors.genre ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all appearance-none cursor-pointer`}
+              >
+                <option value="" disabled>
+                  Select a genre
+                </option>
+                {isCategoriesLoading ? (
+                  <option>Loading...</option>
+                ) : (
+                  categoryOptions?.map((name: any) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))
+                )}
+              </select>
+              <ChevronDown
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] pointer-events-none"
+                size={16}
+              />
+            </div>
+            <ErrorMessage message={errors.genre} />
           </div>
 
           <div className="space-y-2">
