@@ -47,8 +47,7 @@ const HomeMovieCard = ({
     );
   }, [checkResponse, id]);
 
-  // console.log(thumbnailUrl, "thumbnailUrl");
-  const handleMovieAction = (e: React.MouseEvent) => {
+   const handleMovieAction = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -126,11 +125,10 @@ const HomeMovieCard = ({
         )}
 
         <div className="flex items-center gap-2">
-          {/* Main Button */}
-          <Button
+           <Button
             onClick={handleMovieAction}
             disabled={isCheckLoading}
-            className={`flex-1 min-w-0 h-10 whitespace-nowrap rounded-lg font-bold text-[11px] uppercase flex items-center justify-center gap-2 ${
+            className={`flex-1 cursor-pointer min-w-0 h-10 whitespace-nowrap rounded-lg font-bold text-[11px] uppercase flex items-center justify-center gap-2 ${
               isPurchased || !isPremium
                 ? "bg-green-600 hover:bg-green-700 text-white"
                 : "bg-primary text-black hover:bg-primary/90"
@@ -139,15 +137,13 @@ const HomeMovieCard = ({
             {isPurchased || !isPremium ? "Watch" : "Buy"}
           </Button>
 
-          {/* Watchlist */}
-          {(isPurchased || !isPremium) && (
+           {(isPurchased || !isPremium) && (
             <div className="shrink-0">
               <WatchList itemId={id} type="MOVIE" refetch={refetch} />
             </div>
           )}
 
-          {/* View */}
-          <Link
+           <Link
             href={`/movies/${id}`}
             className="shrink-0 px-3 h-10 flex items-center justify-center text-[11px] font-bold uppercase rounded-lg border border-border hover:bg-white/10 transition whitespace-nowrap"
           >

@@ -102,6 +102,28 @@ export default function LoginPage() {
     }
   };
 
+  const handleDemoLogin = (role: "admin" | "user" | "creator") => {
+    if (role === "creator") {
+      setFormData({
+        ...formData,
+        email: "kowig44386@inreur.com",
+        password: "Kowig44386@inreur",
+      });
+    } else if (role === "user") {
+      setFormData({
+        ...formData,
+        email: "tonata9377@poisonword.com",
+        password: "Tonata9377@poisonword.com",
+      });
+    } else {
+      setFormData({
+        ...formData,
+        email: "ataul1708@gmail.com",
+        password: "Ataul12@#",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4 py-10">
       <motion.div
@@ -140,6 +162,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 name="email"
+                value={formData.email}
                 className={`w-full bg-[var(--muted)] border ${errors.email ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all font-medium`}
                 placeholder="mehedi@example.com"
                 onChange={handleChange}
@@ -178,6 +201,7 @@ export default function LoginPage() {
               />
               <input
                 type={showCurrent ? "text" : "password"}
+                value={formData.password}
                 name="password"
                 className={`w-full bg-[var(--muted)] border ${errors.password ? "border-red-500" : "border-[var(--border)]"} rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all font-medium`}
                 placeholder="••••••••"
@@ -224,6 +248,34 @@ export default function LoginPage() {
               </>
             )}
           </motion.button>
+          <div className="space-y-2">
+            <p className="text-sm text-gray-500 text-center">
+              Quick Access for Examiners:
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => handleDemoLogin("user")}
+                className="flex-1 text-white cursor-pointer bg-primary text-sm py-2 rounded border border-primary/20 hover:bg-primary/10 transition dark:bg-green-600"
+              >
+                User Demo
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDemoLogin("creator")}
+                className="flex-1 text-white cursor-pointer  bg-primary  text-sm py-2 rounded border border-primary/20 hover:bg-primary/10 transition dark:bg-green-600"
+              >
+                Creator Demo
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDemoLogin("admin")}
+                className="flex-1 text-white cursor-pointer  bg-primary text-sm py-2 rounded border border-primary/20 hover:bg-primary/10 transition dark:bg-green-600"
+              >
+                Admin Demo
+              </button>
+            </div>
+          </div>
         </form>
 
         <div className="text-center">

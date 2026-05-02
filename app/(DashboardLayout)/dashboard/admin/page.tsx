@@ -127,84 +127,101 @@ export default function AdminOverview() {
             </Link>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-muted/30 text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Item</th>
-                  <th className="px-6 py-4">Amount</th>
-                  <th className="px-6 py-4 text-right">Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {adminData?.recentTransactions?.map((tx: any) => (
-                  <tr
-                    key={tx.id}
-                    className="hover:bg-muted/20 transition-colors group"
-                  >
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-bold uppercase">
-                        {tx.customer || "Unknown"}
-                      </p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-lg font-bold border border-primary/20">
-                        {tx.item}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-black text-green-500">
-                        ${tx.amount}
-                      </p>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <p className="text-[10px] text-muted-foreground font-medium">
-                        {new Date(tx.date).toLocaleDateString()}
-                      </p>
-                    </td>
+            <div
+              className={`pr-2 ${
+                (adminData?.recentTransactions?.length || 0) > 5
+                  ? "max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
+                  : ""
+              }`}
+            >
+              <table className="w-full text-left border-collapse">
+                <thead className="sticky top-0 bg-card z-10">
+                  <tr className="bg-muted/30 text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">
+                    <th className="px-6 py-4">Customer</th>
+                    <th className="px-6 py-4">Item</th>
+                    <th className="px-6 py-4">Amount</th>
+                    <th className="px-6 py-4 text-right">Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="divide-y divide-border">
+                  {adminData?.recentTransactions?.map((tx: any) => (
+                    <tr
+                      key={tx.id}
+                      className="hover:bg-muted/20 transition-colors group"
+                    >
+                      <td className="px-6 py-4">
+                        <p className="text-sm font-bold uppercase">
+                          {tx.customer || "Unknown"}
+                        </p>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-lg font-bold border border-primary/20">
+                          {tx.item}
+                        </span>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <p className="text-sm font-black text-green-500">
+                          ${tx.amount}
+                        </p>
+                      </td>
+
+                      <td className="px-6 py-4 text-right">
+                        <p className="text-[10px] text-muted-foreground font-medium">
+                          {new Date(tx.date).toLocaleDateString()}
+                        </p>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div className="xl:col-span-4 bg-card border border-border rounded-3xl shadow-sm">
+        <div className="xl:col-span-4 bg-card border border-border rounded-3xl shadow-sm overflow-hidden">
           <div className="p-6 border-b border-border">
             <h3 className="font-black uppercase italic tracking-tighter flex items-center gap-2">
               <UserCheck size={18} className="text-primary" /> New Joinings
             </h3>
           </div>
-          <div className="p-6 space-y-6">
-            {adminData?.recentUsers?.map((user: any) => (
-              <div
-                key={user.id}
-                className="flex items-center justify-between group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center font-black text-primary border border-border group-hover:border-primary transition-colors">
-                    {user.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold uppercase leading-none">
-                      {user.name}
-                    </h4>
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      {user.email}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className={`text-[9px] font-black px-2 py-1 rounded-md border ${
-                    user.role === "CREATOR"
-                      ? "border-purple-500/30 text-purple-500 bg-purple-500/5"
-                      : "border-blue-500/30 text-blue-500 bg-blue-500/5"
-                  }`}
+
+          <div className="p-6">
+            <div className="space-y-6 max-h-[320px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+              {adminData?.recentUsers?.slice(0, 5).map((user: any) => (
+                <div
+                  key={user.id}
+                  className="flex items-center justify-between group gap-3"
                 >
-                  {user.role}
-                </span>
-              </div>
-            ))}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center font-black text-primary border border-border group-hover:border-primary transition-colors shrink-0">
+                      {user.name.charAt(0)}
+                    </div>
+
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-bold uppercase leading-none truncate">
+                        {user.name}
+                      </h4>
+                      <p className="text-[10px] text-muted-foreground mt-1 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span
+                    className={`shrink-0 text-[9px] font-black px-2 py-1 rounded-md border whitespace-nowrap ${
+                      user.role === "CREATOR"
+                        ? "border-purple-500/30 text-purple-500 bg-purple-500/5"
+                        : "border-blue-500/30 text-blue-500 bg-blue-500/5"
+                    }`}
+                  >
+                    {user.role}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
