@@ -8,6 +8,7 @@ import {
   Clapperboard,
   ChevronLeft,
   ChevronRight,
+  Sparkles, // AI আইকনের জন্য
 } from "lucide-react";
 import { useAllMoviesQuery, useCategoriesQuery } from "@/redux/api/movieApi";
 import { ICategory, IMovieResponse } from "@/types/interface/movie.interface";
@@ -39,6 +40,8 @@ const MoviesPage = () => {
   });
 
   const movies = moviesRes?.data?.movies || [];
+  // ব্যাকএন্ড থেকে আসা AI সাজেশন্স ধরছি
+  const aiSuggestions = moviesRes?.data?.aiSuggestions || [];
   const pagination = moviesRes?.data?.pagination;
   const { totalMovies = 0, totalPages = 1 } = pagination || {};
 
@@ -59,17 +62,39 @@ const MoviesPage = () => {
       </div>
 
       <div className="space-y-6 mb-12">
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by title, director, cast..."
-            className="pl-10 rounded-xl bg-card border-border focus-visible:ring-primary h-12"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1);
-            }}
-          />
+        <div className="space-y-3">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by title, director, cast..."
+              className="pl-10 rounded-xl bg-card border-border focus-visible:ring-primary h-12"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+
+          {aiSuggestions.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-500">
+              <span className="flex items-center gap-1.5 text-[10px] font-black uppercase text-primary tracking-widest bg-primary/10 px-2 py-1 rounded">
+                <Sparkles size={12} className="fill-primary" /> AI Suggestions:
+              </span>
+              {aiSuggestions.map((suggestion: string, idx: number) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setSearchQuery(suggestion);
+                    setCurrentPage(1);
+                  }}
+                  className="text-[10px] font-bold text-muted-foreground hover:text-primary bg-secondary/30 hover:bg-secondary/60 px-3 py-1 rounded-full border border-border transition-all"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar border-b border-border/50">
@@ -111,7 +136,7 @@ const MoviesPage = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
-                className="p-2 rounded-full border border-border hover:bg-primary hover:text-black disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-all"
+                className="p-2 rounded-full border border-border hover:bg-primary hover:text-black disabled:opacity-30 disabled:hover:bg-transparent transition-all"
               >
                 <ChevronLeft size={20} />
               </button>

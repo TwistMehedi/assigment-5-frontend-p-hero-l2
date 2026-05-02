@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clapperboard,
+  Sparkles,
 } from "lucide-react";
 import SeriesCard from "@/components/Series/SeriesCard";
 import { useAllSeriesQuery } from "@/redux/api/series.api";
@@ -32,14 +33,13 @@ const SeriesPage = () => {
     searchTerm: searchQuery,
     category: selectedCategory,
     page: currentPage,
-    limit: 5,
+    limit: 10,
   });
 
   const allSeries = response?.data?.data || [];
+  const aiSuggestions = response?.data?.aiSuggestions || [];
   const pagination = response?.data?.meta;
   const { totalPage = 1 } = pagination || {};
-
-  console.log(allSeries);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -77,6 +77,26 @@ const SeriesPage = () => {
                 }}
               />
             </div>
+
+            {aiSuggestions.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-500">
+                <span className="flex items-center gap-1 text-[9px] font-black uppercase text-primary bg-primary/10 px-2 py-1 rounded">
+                  <Sparkles size={10} className="fill-primary" /> Smart Tips:
+                </span>
+                {aiSuggestions.map((suggestion: string, idx: number) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setSearchQuery(suggestion);
+                      setCurrentPage(1);
+                    }}
+                    className="text-[10px] font-bold text-muted-foreground hover:text-primary bg-secondary/20 hover:bg-secondary/50 px-3 py-1 rounded-full border border-border transition-all"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -126,38 +146,29 @@ const SeriesPage = () => {
               <button
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
-                className="h-12 w-12 flex items-center justify-center rounded-2xl border border-border hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-transparent transition-all active:scale-90"
+                className="h-12 w-12 flex items-center justify-center rounded-2xl border border-border hover:bg-primary hover:text-black disabled:opacity-20 transition-all active:scale-90"
               >
                 <ChevronLeft size={24} />
               </button>
-
               <div className="hidden sm:flex items-center gap-2">
-                {[...Array(totalPage)].map((_, index) => {
-                  const pageNumber = index + 1;
-                  return (
-                    <button
-                      key={pageNumber}
-                      onClick={() => handlePageChange(pageNumber)}
-                      className={`h-12 w-12 rounded-2xl text-[10px] font-black transition-all active:scale-90 ${
-                        currentPage === pageNumber
-                          ? "bg-primary text-black shadow-xl shadow-primary/20 scale-110"
-                          : "bg-card border border-border hover:border-primary/50"
-                      }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                })}
+                {[...Array(totalPage)].map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`h-12 w-12 rounded-2xl text-[10px] font-black transition-all ${
+                      currentPage === index + 1
+                        ? "bg-primary text-black shadow-xl shadow-primary/20 scale-110"
+                        : "bg-card border border-border"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
               </div>
-
-              <div className="sm:hidden text-[10px] font-black uppercase tracking-widest bg-card px-6 py-3 rounded-2xl border border-border">
-                Page {currentPage} of {totalPage}
-              </div>
-
               <button
                 disabled={currentPage === totalPage}
                 onClick={() => handlePageChange(currentPage + 1)}
-                className="h-12 w-12 flex items-center justify-center rounded-2xl border border-border hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-transparent transition-all active:scale-90"
+                className="h-12 w-12 flex items-center justify-center rounded-2xl border border-border hover:bg-primary hover:text-black disabled:opacity-20 transition-all active:scale-90"
               >
                 <ChevronRight size={24} />
               </button>
@@ -175,17 +186,13 @@ const SeriesPage = () => {
           <h3 className="text-xl font-black uppercase italic tracking-tighter mb-2">
             No Series Found
           </h3>
-          <p className="text-muted-foreground font-medium text-sm text-center px-6 mb-8 max-w-sm">
-            We couldn't find any series matching your current filters or search
-            term.
-          </p>
           <button
             onClick={() => {
               setSearchQuery("");
               setSelectedCategory("All");
               setCurrentPage(1);
             }}
-            className="text-black bg-primary text-[10px] font-black uppercase tracking-[0.2em] px-10 py-4 rounded-2xl hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95"
+            className="text-black bg-primary text-[10px] font-black uppercase tracking-[0.2em] px-10 py-4 rounded-2xl transition-all active:scale-95"
           >
             Clear All Filters
           </button>
