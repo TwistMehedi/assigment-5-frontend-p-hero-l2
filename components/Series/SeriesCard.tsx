@@ -1,6 +1,5 @@
-
 import Link from "next/link";
-import { Star, Tv } from "lucide-react";
+import { Play, Star, Tv } from "lucide-react";
 
 interface SeriesProps {
   id: number;
@@ -28,7 +27,7 @@ const SeriesCard = ({
   return (
     <Link href={`/series/${id}`}>
       <div className="group relative bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-xl transition-all duration-300">
-        <div className="relative aspect-[2/3] overflow-hidden">
+        <div className="relative aspect-[18/19] overflow-hidden">
           <img
             src={posterUrl}
             alt={title}
@@ -39,6 +38,12 @@ const SeriesCard = ({
             <span className="text-xs font-bold text-white">
               {averageRating}/10
             </span>
+          </div>
+
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+            <div className="bg-primary p-4 rounded-full scale-50 group-hover:scale-100 transition-transform duration-500 shadow-2xl">
+              <Play className="h-8 w-8 text-black fill-current" />
+            </div>
           </div>
         </div>
 

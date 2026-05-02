@@ -5,6 +5,7 @@ import HomeMovieCard from "@/components/Home/HomeMovieCard";
 import { useLatestMoviesQuery } from "@/redux/api/movieApi";
 import { Loader2, Film } from "lucide-react";
 import Link from "next/link";
+import CardSkeleton from "../shared/CardSkeleton";
 
 const Treending = () => {
   const { data: response, isLoading } = useLatestMoviesQuery(undefined);
@@ -13,8 +14,10 @@ const Treending = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Loader2 className="animate-spin text-primary" size={40} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <CardSkeleton key={i} />
+        ))}
       </div>
     );
   }
@@ -38,12 +41,13 @@ const Treending = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {movies.map((movie: any) => (
           <HomeMovieCard
             key={movie.id}
             id={movie.id}
             title={movie.title}
+            thumbnailUrl={movie.thumbnailUrl}
             videoUrl={movie.videoUrl || movie.videoUrl}
             rating={movie.averageRating || 0}
             genre={movie.genre}

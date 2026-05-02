@@ -13,6 +13,7 @@ import { useAllMoviesQuery, useCategoriesQuery } from "@/redux/api/movieApi";
 import { ICategory, IMovieResponse } from "@/types/interface/movie.interface";
 import HomeMovieCard from "../Home/HomeMovieCard";
 import { useSearchParams } from "next/navigation";
+import CardSkeleton from "../shared/CardSkeleton";
 
 const MoviesPage = () => {
   const searchParams = useSearchParams();
@@ -92,15 +93,14 @@ const MoviesPage = () => {
       </div>
 
       {isMoviesLoading ? (
-        <div className="flex flex-col items-center justify-center py-32 gap-4">
-          <Loader2 className="animate-spin text-primary" size={48} />
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-50">
-            Loading Content...
-          </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
         </div>
       ) : movies.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {movies.map((movie: IMovieResponse) => (
               <HomeMovieCard key={movie.id} {...movie} />
             ))}

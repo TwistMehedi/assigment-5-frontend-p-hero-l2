@@ -3,12 +3,34 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { toast } from "react-toastify";
 
 export default function () {
   const [email, setEmail] = useState("");
-  const subsription = () => {
-    console.log(email);
+
+  const validateEmail = (email: string) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      );
   };
+
+  const subsription = () => {
+    if (!email) {
+      toast.error("Please enter an email address!");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast.error("Please enter a valid email address!");
+      return;
+    }
+
+    toast.success("Subscribed successfully!");
+    setEmail("");
+  };
+
   return (
     <div>
       <h4 className="font-bold text-lg mb-6">Newsletter</h4>

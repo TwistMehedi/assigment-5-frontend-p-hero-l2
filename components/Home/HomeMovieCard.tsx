@@ -47,6 +47,7 @@ const HomeMovieCard = ({
     );
   }, [checkResponse, id]);
 
+  // console.log(thumbnailUrl, "thumbnailUrl");
   const handleMovieAction = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -67,7 +68,7 @@ const HomeMovieCard = ({
       whileHover={{ y: -8 }}
       className="group relative bg-card rounded-2xl overflow-hidden shadow-lg border border-border cursor-pointer"
     >
-      <div className="relative aspect-[2/3] overflow-hidden">
+      <div className="relative aspect-[18/19] overflow-hidden">
         <img
           src={thumbnailUrl}
           alt={title}
@@ -85,6 +86,13 @@ const HomeMovieCard = ({
               {isPurchased ? "Owned" : "Free"}
             </div>
           )}
+        </div>
+
+        <div className="absolute top-3 right-3 z-10">
+          <div className="flex items-center gap-1 bg-black/70 backdrop-blur-md text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-md shadow-lg">
+            <Star size={12} className="fill-yellow-400" />
+            <span className="text-white">{rating}/10</span>
+          </div>
         </div>
 
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
@@ -110,43 +118,40 @@ const HomeMovieCard = ({
             {title}
           </h3>
         </Link>
+
         {user?.name && (
           <p className="text-muted-foreground text-xs font-medium">
             {user?.name}
           </p>
         )}
-        <div className="flex flex-col gap-3">
+
+        <div className="flex items-center gap-2">
+          {/* Main Button */}
           <Button
             onClick={handleMovieAction}
             disabled={isCheckLoading}
-            className={`w-full cursor-pointer h-12 rounded-xl font-black uppercase tracking-wider gap-3 transition-all ${
+            className={`flex-1 min-w-0 h-10 whitespace-nowrap rounded-lg font-bold text-[11px] uppercase flex items-center justify-center gap-2 ${
               isPurchased || !isPremium
                 ? "bg-green-600 hover:bg-green-700 text-white"
                 : "bg-primary text-black hover:bg-primary/90"
             }`}
           >
-            {isCheckLoading ? (
-              <Loader2 className="animate-spin h-5 w-5" />
-            ) : isPurchased || !isPremium ? (
-              <>
-                <PlayCircle size={20} /> Watch Now
-              </>
-            ) : (
-              <>
-                <ShoppingCart size={18} /> Buy Now
-              </>
-            )}
+            {isPurchased || !isPremium ? "Watch" : "Buy"}
           </Button>
 
+          {/* Watchlist */}
           {(isPurchased || !isPremium) && (
-            <WatchList itemId={id} type="MOVIE" refetch={refetch} />
+            <div className="shrink-0">
+              <WatchList itemId={id} type="MOVIE" refetch={refetch} />
+            </div>
           )}
 
+          {/* View */}
           <Link
             href={`/movies/${id}`}
-            className="text-center text-[10px] uppercase font-bold text-muted-foreground hover:text-primary transition-colors"
+            className="shrink-0 px-3 h-10 flex items-center justify-center text-[11px] font-bold uppercase rounded-lg border border-border hover:bg-white/10 transition whitespace-nowrap"
           >
-            View Details
+            View
           </Link>
         </div>
       </div>

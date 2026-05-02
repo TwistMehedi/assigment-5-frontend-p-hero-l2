@@ -14,6 +14,7 @@ import SeriesCard from "@/components/Series/SeriesCard";
 import { useAllSeriesQuery } from "@/redux/api/series.api";
 import { useCategoriesQuery } from "@/redux/api/movieApi";
 import { ICategory } from "@/types/interface/movie.interface";
+import CardSkeleton from "@/components/shared/CardSkeleton";
 
 const SeriesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,14 +35,12 @@ const SeriesPage = () => {
     limit: 5,
   });
 
-
-
   const allSeries = response?.data?.data || [];
   const pagination = response?.data?.meta;
   const { totalPage = 1 } = pagination || {};
 
- console.log(allSeries);
- 
+  console.log(allSeries);
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -104,18 +103,14 @@ const SeriesPage = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-40 gap-6">
-          <div className="relative">
-            <Loader2 className="animate-spin text-primary" size={60} />
-            <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse"></div>
-          </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground animate-pulse">
-            Curating your library...
-          </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
         </div>
       ) : allSeries.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {allSeries.map((series: any) => (
               <div
                 key={series.id}

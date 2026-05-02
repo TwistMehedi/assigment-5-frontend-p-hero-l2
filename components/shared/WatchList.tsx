@@ -31,10 +31,9 @@ const WatchList = ({ itemId, type, refetch }: WatchList) => {
     <Button
       onClick={handleWatchButton}
       disabled={isLoading}
-      className="w-full h-12 rounded-xl font-black uppercase tracking-wider transition-all bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+      className="w-full h-9 px-2 rounded-lg text-[11px] font-semibold uppercase tracking-wide transition-all bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-1 cursor-pointer disabled:opacity-50"
     >
-      <PlayCircle size={20} />
-      <span>Watch Later</span>
+      <span className="whitespace-nowrap">Watch Later</span>
     </Button>
   );
 };
