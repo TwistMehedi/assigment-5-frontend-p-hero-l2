@@ -54,10 +54,10 @@
 
 :root {
   /* HSL/RGB conversion for better Framer Motion support */
-  --background: hsl(240, 20%, 98%);
+  --background: hsl(240, 23%, 87%);
   --foreground: hsl(240, 10%, 15%);
   
-  --primary: hsl(260, 60%, 45%); 
+  --primary: hsl(264, 21%, 91%); 
   --primary-foreground: hsl(0, 0%, 98%);
   
   --card: hsl(0, 0%, 100%);

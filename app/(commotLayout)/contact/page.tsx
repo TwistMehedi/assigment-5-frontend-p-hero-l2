@@ -131,7 +131,7 @@ const ContactPage = () => {
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                rows="5"
+                rows={5}
                 placeholder="How can we help you?"
                 className="w-full px-5 py-4 rounded-xl bg-white dark:bg-[#252525] border border-transparent focus:border-red-600 focus:ring-0 outline-none transition-all duration-200 shadow-sm resize-none"
               ></textarea>

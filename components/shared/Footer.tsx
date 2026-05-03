@@ -7,6 +7,7 @@ import {
   Youtube,
   Mail,
   Phone,
+  LinkedinIcon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -38,19 +39,19 @@ const Footer = () => {
                 <Facebook size={18} />
               </Link>
               <Link
-                href="#"
+                href="https://www.linkedin.com/in/twist-mehedi-243a72231"
                 className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all"
               >
-                <Twitter size={18} />
+                <LinkedinIcon size={18} />
               </Link>
               <Link
-                href="#"
+                href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2Ftwist_mehedi%3Figsh%3DMWlldHhqaHB0cTNiNA%253D%253D%26fbclid%3DIwZXh0bgNhZW0CMTAAYnJpZBExY3JYd0Uxa0pkOUs1TXZ2WnNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR7K3fb8BfwLKgacfiKR8_2gwwQCpDCJzsJOu8cXFxOSc-5iqHFuAl2EaEPTVg_aem_35Tz0n7erHANqS23On09JQ&h=AUDhoglpQ4VQUYqXcGkcVOPA25ww6Oq8a-oDyHSfxNRoWfEXcSRy5J4btFM2pqqIJDHZPXPpEwOQO9Ni6i3_PivWrBcZUyCumaHLYvWaAWqsVcE84qYywGLdJeFzBaH2hysNeA"
                 className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all"
               >
                 <Instagram size={18} />
               </Link>
               <Link
-                href="#"
+                href="https://www.youtube.com/@false007"
                 className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all"
               >
                 <Youtube size={18} />

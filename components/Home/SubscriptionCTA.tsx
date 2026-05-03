@@ -20,7 +20,7 @@ const SubscriptionCTA = () => {
         <Link href="/pricing">
           <Button
             size="lg"
-            className="h-16 px-12 rounded-full text-xl font-black shadow-xl shadow-primary/40 hover:scale-105 transition-transform"
+            className="h-16 px-12 cursor-pointer rounded-full text-xl font-black shadow-xl shadow-primary/40 hover:scale-105 transition-transform"
           >
             View All Plans
           </Button>

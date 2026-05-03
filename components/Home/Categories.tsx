@@ -8,8 +8,8 @@ const Categories = () => {
   const genres = response?.data || [];
 
   return (
-    <section className="py-24 container mx-auto px-4">
-       <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6 border-l-4 border-primary pl-6">
+    <section className="pt-24 container mx-auto px-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6 border-l-4 border-primary pl-6">
         <div>
           <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
             Browse by{" "}
@@ -33,7 +33,6 @@ const Categories = () => {
         </Link>
       </div>
 
-      {/* Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
         {genres.map((genre: any, idx: number) => (
           <Link
@@ -41,27 +40,26 @@ const Categories = () => {
             href={`/movies?category=${genre.name}`}
             className="
               relative group 
+               
               h-24 flex items-center justify-center
               rounded-2xl 
-              border border-white/10 
-              bg-white/5 backdrop-blur-xl
+              /* Border and Background visible by default */
+              border border-primary/20 
+              bg-primary/5 backdrop-blur-xl
               overflow-hidden
               transition-all duration-500
               hover:scale-[1.05] hover:-translate-y-2
-              hover:border-primary/50
+              hover:border-primary/60
               hover:shadow-[0_10px_40px_rgba(0,0,0,0.4)]
             "
           >
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 opacity-0 group-hover:opacity-100 transition duration-500 blur-xl" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-100" />
 
-            {/* Content */}
-            <h3 className="relative z-10 text-lg md:text-xl font-bold tracking-wide text-white group-hover:text-primary transition">
+            <h3 className="relative z-10 text-black dark:text-white text-lg md:text-xl font-bold tracking-wide transition-colors duration-300 group-hover:text-primary">
               {genre.name}
             </h3>
 
-            {/* Animated border line */}
-            <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-primary group-hover:w-full transition-all duration-500" />
+            <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-50 group-hover:opacity-100 transition-all duration-500" />
           </Link>
         ))}
       </div>

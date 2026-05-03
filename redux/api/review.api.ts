@@ -49,6 +49,13 @@ export const reviewApi = createApi({
       }),
       providesTags: ["Review"],
     }),
+    allReviewsTestimonial: builder.query({
+      query: () => ({
+        url: "testimonial-reviews",
+        method: "GET",
+      }),
+      providesTags: ["Review"],
+    }),
   }),
 });
 
@@ -58,4 +65,5 @@ export const {
   useAllUserReviewsQuery,
   useUpdateReviewStatusMutation,
   useMyReviewsQuery,
+  useAllReviewsTestimonialQuery,
 } = reviewApi;
